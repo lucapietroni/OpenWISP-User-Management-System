@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', :git => 'git://github.com/spawnazzo/rails.git', :branch => '3-0-stable'
+gem 'rails', '3.0.12'
 gem 'mysql2', '~> 0.2.7'
 
 gem 'exception_notification', :require => 'exception_notifier'
@@ -9,7 +9,7 @@ gem 'authlogic', '~> 3.0.3'
 gem 'acl9', '~> 0.12.0'
 
 gem 'chronic', '~> 0.2.3'
-gem 'packet', '0.1.15', :git => 'git://github.com/dguerri/packet.git'
+gem 'packet', '0.1.15'
 
 gem 'jquery-rails', '~> 1.0.9'
 gem 'kaminari', '~> 0.12.4'
