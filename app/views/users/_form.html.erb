@@ -20,6 +20,26 @@
 <%= f.input :username, :disabled => !user.new_record? %>
 
 
+<% div_tag :class => 'verification-block' do %>
+  <% if f.object.has_image? %>
+      <strong><%= f.label :uploaded_document_photo %></strong>
+      <br />
+      <p style="text-align:center">
+        <% if f.object.new_record? %>
+          <%= embedded_image_tag(f.object.operate { |img| img.resize 100 }) %>
+        <% else %>
+          <%= link_to embedded_image_tag(f.object.operate { |img| img.resize 100 }), user_path(user, :jpg), :target => '_blank' %>
+        <% end %>
+      </p>
+  <% end %>
+  <strong><%= f.label :document_photo %></strong>
+  <br />
+  <%= f.file_field :image_file %>
+  <%= f.hidden_field :image_file_temp %>
+<% end %>
+
+<div class="clearb">&nbsp;</div>
+
 <% if user.new_record? %>
     <% if user_verification_methods.length == 1 %>
         <%= f.input :verification_method, :as => :hidden %>
@@ -33,7 +53,7 @@
     %>
 <% end %>
 
-<%= render 'common/form_elements/mobile_phone', :form => f, :owner => user, :prefixes => mobile_prefixes %>
+<%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
 
 <%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
 

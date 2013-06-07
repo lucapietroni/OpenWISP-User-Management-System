@@ -1,0 +1,14 @@
+<div class="grid_12">
+  <div class="box">
+  <h2><%= t("browse_cpe_templates") %> <%= image_tag 'spinner_black.gif', :id => 'loading', :class => 'hidden' %></h2>
+  <div id="main_div">
+    <%= form_tag cpe_templates_path, :method => 'get', :id => "div_update_search" do %>
+      <%= render "common/search" %>
+    <% end %>
+    <div id="div_update">
+       <%= render 'fetchAll' %>
+    </div>
+    <%= link_to t("Add"), new_cpe_template_path, :class => "button", :remote => true %>
+  </div>
+</div>  
+</div>

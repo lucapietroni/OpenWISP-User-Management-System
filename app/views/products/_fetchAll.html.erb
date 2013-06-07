@@ -1,0 +1,39 @@
+<%= hidden_field_tag :direction, params[:direction] %>
+<%= hidden_field_tag :sort, params[:sort] %>
+
+<h5><%= t("all_records") %> (<%= @o_all.size %>)</h5>
+<table>
+  <tr>
+    <th width="20%"><%= sortable "name", t("name") %></th>
+    <th width="20%"><%= sortable "code", t("code") %></th>
+  	<th width="20%"><%= sortable "created_at", t("created_at") %></th>
+  	<th width="10%"><%= t("actions") %></th>
+  </tr>
+<% if @o_all.size > 0 %>    
+  <% for o_row in @o_all %>
+    <tr>
+      <td><%= o_row.name %></td>
+      <td><%= o_row.code %></td>
+      <td><%= o_row.created_at.to_s(:pretty) %></td>
+      <td> 
+		    <%= link_to image_tag("edit.png", :width => "16px", :height => "16px", :title => t("edit")), edit_product_path(o_row), :remote => true %>
+		    <%= link_to image_tag("delete.png", :width => "16px", :height => "16px", :title => t("destroy")), product_delete_path(o_row.id), :class => "detach", :id => "#{o_row.id}", :remote => true%>
+		    <span id=<%= "detach_progress_#{o_row.id}" %> class="detachProgressDiv" style="display:none;"><%= image_tag("spinner.gif") %></span>
+		  </td>
+    </tr>
+  <% end %>
+<% else %>
+  <tr><th colspan="6"><%= t("record_not_found") %></th></tr>
+<% end %>   
+</table>
+
+<script type="text/javascript">
+  $('.detach').click(function() {
+      var r=confirm("Are you sure to delete ?");
+      if (r==true){
+        $('#detach_progress_'+$(this).attr('id')).show();
+      }else {
+        return false;
+      }
+  });
+</script>  

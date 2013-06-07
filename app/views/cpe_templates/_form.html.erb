@@ -1,0 +1,31 @@
+<div class="loginfom frontform">
+  <%= form_for @o_single do |f| %>
+    <p>
+      <%= t("name") %><i class="redStart">*</i>
+  		<% if @o_single.errors[:name].any? %>
+  			<span class="text-error">	
+  				<%= t('field_required') %>
+  			</span>
+  		<% end %>
+  	</p>	
+  	<%= f.text_field :name %>	
+  	
+    <p>
+      <%= t("content") %>
+    </p>  
+    <%= f.text_area :template %> 	
+  
+   
+    <p>
+      <%= t('active') %>
+      <%= f.check_box :active %>
+    </p>
+  
+    <p>
+      <%= f.submit :value => t("save"), :class => "btn btn-info" %>
+      <%= link_to t("back"), cpe_templates_path, :class => "btn btn-info" %>
+    </p>
+  <% end %>
+  <div class="cl"></div>
+</div>
+

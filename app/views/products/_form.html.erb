@@ -1,0 +1,25 @@
+<div class="loginfom frontform">
+  <%= form_for @o_single do |f| %>
+    <p>
+      <%= t("name") %>
+  	</p>	
+  	<%= f.text_field :name %>	
+  	
+    <p>
+      <%= t("code") %><i class="redStart">*</i>
+      <% if @o_single.errors[:code].any? %>
+        <span class="text-error"> 
+          <%= t('field_required') %>
+        </span>
+      <% end %>
+    </p>  
+    <%= f.text_field :code %> 
+  
+    <p>
+      <%= f.submit :value => t("save"), :class => "btn btn-info" %>
+      <%= link_to t("back"), products_path, :class => "btn btn-info" %>
+    </p>
+  <% end %>
+  <div class="cl"></div>
+</div>
+

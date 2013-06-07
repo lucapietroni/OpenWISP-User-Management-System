@@ -36,15 +36,23 @@ class User < AccountCommon
 
   # Validations
   validate :verification_method_inclusion
+  validates :tax_code, :presence => {:message => "can't be blank"}
+  validates :vat_number, :presence => {:message => "can't be blank"}
+  
+  validates :iban, :presence => {:message => "can't be blank"}
 
   has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy
+  has_many :operator_users
+  belongs_to :cpe_template
+  belongs_to :product
 
   attr_accessible :given_name, :surname, :birth_date, :state, :city, :address, :zip,
                   :email, :email_confirmation, :password, :password_confirmation,
                   :mobile_prefix, :mobile_suffix, :verified, :verification_method,
                   :notes, :eula_acceptance, :privacy_acceptance,
-                  :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids
+                  :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids,
+                  :tax_code, :vat_number, :iban, :product_id, :cpe_template_id
 
   # Custom validations
 

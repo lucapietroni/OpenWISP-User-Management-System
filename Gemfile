@@ -26,3 +26,11 @@ gem 'capistrano', '~> 2.9.0', :require => false
 gem 'capistrano-ext', '~> 1.2.1', :require => false
 gem 'cap-recipes', '~> 0.3.36', :require => false
 gem 'capistrano_colors', '~> 0.5.4', :require => false
+
+#validate Italian tax Code (Codice Fiscale) or Italian VAT (Partita IVA) 
+gem 'italian_job', :git=>'git://github.com/lucapette/italian_job'
+
+#validate iban numbers
+gem "iban-check", "~> 0.1.1"
+
+gem 'pdf-writer', :git => 'git://github.com/metaskills/pdf-writer.git'

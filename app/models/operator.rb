@@ -52,6 +52,8 @@ class Operator < ActiveRecord::Base
 
   # Access current_operator from models
   cattr_accessor :current_operator
+  
+  has_many :operator_users
 
   def initialize(params = nil)
     super(params)

@@ -51,6 +51,8 @@
   <%= content_for :after_defaults %>
 
   <%= javascript_include_tag 'fluid16' %>
+  
+  <%= javascript_include_tag 'common' %>
 
   <link rel="shortcut icon" href="<%= image_path 'openwisp.ico' %>"/>
   <%= csrf_meta_tag %>
@@ -138,6 +140,9 @@
               <% end %>
             </ul>
           </li>
+          <li><%= menu_link_to t(:products), products_path %></li>          
+          <li><%= menu_link_to t(:cpe_templates), cpe_templates_path %></li>
+          
           <li class="secondary"><%= menu_link_to t(:Logout), operator_logout_url, :method => :delete %></li>
           <li class="secondary"><%= menu_link_to t(:Home), operator_url(current_operator) %></li>
       <% else %>
@@ -163,6 +168,7 @@
     </div>
   </div>
   <div class="clear"></div>
+  <div class="alert-success" id="flash_destroy_notice"></div>
 
   <%= yield %>
 
