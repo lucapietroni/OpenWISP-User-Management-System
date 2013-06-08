@@ -52,7 +52,9 @@ class User < AccountCommon
                   :mobile_prefix, :mobile_suffix, :verified, :verification_method,
                   :notes, :eula_acceptance, :privacy_acceptance,
                   :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids,
-                  :tax_code, :vat_number, :iban, :product_id, :cpe_template_id
+                  :tax_code, :vat_number, :iban, :product_id, :cpe_template_id, :pg_ragione_sociale, :pg_partita_iva,
+                  :pg_indirizzo, :pg_cap, :pf_cf, :pf_luogo_di_nascita, :inst_indirizzo, :inst_cap, :inst_cpe_modello,
+                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note
 
   # Custom validations
 

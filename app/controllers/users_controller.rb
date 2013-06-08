@@ -70,13 +70,13 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		check_tax_vat_iban_number
-    if @user.save
+		
+    if @user.save and check_tax_vat_iban_number(@user)
       current_account_session.destroy unless current_account_session.nil?
 
       # Associate user with the operator the current operator
       current_operator.has_role!('user_manager', @user)
-
+			create_user_role(@user.id)
       respond_to do |format|
         format.html { render :ticket }
         format.xml { render :xml => @user, :status => :created }
@@ -451,4 +451,8 @@ class UsersController < ApplicationController
     @total_users = User.joins(:operator_users).count :conditions => conditions
     @users = User.joins(:operator_users).select("users.*, operator_users.operator_id").where(conditions).order(sort).page(page).per(items_per_page)
   end
+  
+  def create_user_role(user_id)  
+  	OperatorUser.create(user_id: user_id, operator_id: current_operator.id)
+  end	
 end

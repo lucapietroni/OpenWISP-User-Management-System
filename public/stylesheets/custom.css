@@ -78,7 +78,7 @@ fieldset p input {
 
 fieldset input {
     width:98%;
-    margin-left:5px;
+    
 }
 
 fieldset p select {
@@ -225,7 +225,7 @@ li > .off {
 }
 
 .input {
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
 .small_graph {
