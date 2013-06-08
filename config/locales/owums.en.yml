@@ -373,4 +373,4 @@ If you still have problems resetting the password, try repeating the procedure"
   select_product: "Select Product"
   browse_cpe_templates: "Browse CPE templates"
   browse_products: "Browse products"
-
+  iban_number_is_invalid: "number is invalid"

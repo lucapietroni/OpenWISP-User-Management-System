@@ -60,7 +60,7 @@ class UsersController < ApplicationController
   	#verify_number = check_tax_vat_iban_number
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
     @user = User.new(params[:user])
-
+		check_tax_vat_iban_number(@user)
     # Parameter anti-tampering
     unless current_operator.has_role? 'users_manager'
       @user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:default_radius_group))]
@@ -70,13 +70,13 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-
-    if @user.save
+		
+    if @user.save and check_tax_vat_iban_number(@user)
       current_account_session.destroy unless current_account_session.nil?
 
       # Associate user with the operator the current operator
       current_operator.has_role!('user_manager', @user)
-
+			create_user_role(@user.id)
       respond_to do |format|
         format.html { render :ticket }
         format.xml { render :xml => @user, :status => :created }
@@ -88,17 +88,6 @@ class UsersController < ApplicationController
       end
     end
   end
-
-	def check_tax_vat_iban_number
-		iban = Iban::IbanCheck.new :iban => params[:user][:iban]
-		if iban.valid?
-			flash.keep[:error] = t("iban number is invalid")
-			return true
-		else	
-			flash.keep[:error] = t("iban number is invalid")
-			return false
-		end
-	end
 	
   def show
     if request.format.html? || request.format.js?
@@ -121,6 +110,7 @@ class UsersController < ApplicationController
   end
 
   def update
+  	
     # Parameter anti-tampering
     params[:user][:radius_group_ids] = nil unless current_operator.has_role? 'users_manager'
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
@@ -128,8 +118,8 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-
-    if @user.update_attributes(params[:user])
+		
+    if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
 
@@ -153,6 +143,24 @@ class UsersController < ApplicationController
       format.xml { render :nothing => true, :status => :ok }
     end
   end
+
+	def check_tax_vat_iban_number(obj)
+    begin
+      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
+    rescue Exception
+			flash.keep[:error] = t("iban_number_is_invalid")
+			obj.errors.add(:iban, t("iban_number_is_invalid"))
+			return false
+    end	
+	
+		if iban.valid?
+			return true
+		else	
+			flash.keep[:error] = t("iban_number_is_invalid")
+			obj.errors.add(:iban, t("iban_number_is_invalid"))
+			return false
+		end
+	end
 
   def find
     if params[:user] && params[:user][:query]
@@ -443,4 +451,8 @@ class UsersController < ApplicationController
     @total_users = User.joins(:operator_users).count :conditions => conditions
     @users = User.joins(:operator_users).select("users.*, operator_users.operator_id").where(conditions).order(sort).page(page).per(items_per_page)
   end
+  
+  def create_user_role(user_id)  
+  	OperatorUser.create(user_id: user_id, operator_id: current_operator.id)
+  end	
 end
