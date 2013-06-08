@@ -128,7 +128,9 @@
                 <%= menu_link_to t(:Operators), '#' %>
                 <ul>
                   <li><%= menu_link_to t(:Browse_operators), operators_url %></li>
-                  <li><%= menu_link_to t(:Add_new_operator), new_operator_url %></li>
+                  <% if current_operator.is_admin %>
+                    <li><%= menu_link_to t(:Add_new_operator), new_operator_url %></li>
+                  <% end %>  
                 </ul>
               </li>
           <% end %>

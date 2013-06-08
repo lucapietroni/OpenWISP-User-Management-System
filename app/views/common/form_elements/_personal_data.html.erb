@@ -41,12 +41,7 @@
   <%= form.input :tax_code %>
   
   <%= form.input :vat_number %>
-  
-  <% if flash[:error] %>
-    <div class="alert-success">
-      <%= flash[:error] %>
-    </div>
-  <% end %>  
+    
   <%= form.input :iban %>
   
   <strong><%= form.label :product_id, t(:product) %></strong><br />
