@@ -324,7 +324,7 @@ class UsersController < ApplicationController
 		
 		firme_data = []
 	    
-		firme_data << { "Contratto" => "Firma per accettazione delle condizioni generali di contratto ", "Dati" => "Firma per accettazione delle clausole relative al trattamento dei dati personali ", "RID" =>  "Firma per accettazione all'attivazione del prelievo automatico mensile RID sul conto indicato IBAN" }  
+		firme_data << { "Contratto" => "Firma per accettazione delle condizioni generali di contratto ", "Dati" => "Firma per accettazione delle clausole relative al trattamento dei dati personali ", "RID" =>  "Firma per accettazione all'attivazione dell'addebito automatico via RID" }
 		firme_data << { "Contratto" => "\n\n ", "Dati" => "\n\n ", "RID" =>  "\n\n" }
 	
 		firme = PDF::SimpleTable.new
