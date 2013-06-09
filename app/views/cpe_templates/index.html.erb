@@ -1,6 +1,6 @@
 <div class="grid_12">
   <div class="box">
-  <h2><%= t("browse_cpe_templates") %> <%= image_tag 'spinner_black.gif', :id => 'loading', :class => 'hidden' %></h2>
+  <h2><%= t("browse_cpe_templates") %></h2>
   <div id="main_div">
     <%= form_tag cpe_templates_path, :method => 'get', :id => "div_update_search" do %>
       <%= render "common/search" %>

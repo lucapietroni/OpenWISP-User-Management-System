@@ -19,8 +19,12 @@
 <div class="grid_4">
   <%= f.input :username, :disabled => !user.new_record? %>
 </div>
-
-
+<div class="grid_8"></div>
+<div class="grid_4">
+  <strong><%= f.label :is_company, t("is_company") %></strong>  
+  <%= f.check_box :is_company %>
+</div>
+<div class="clearb">&nbsp;</div>
 <div class="grid_8">  
 <% if user.new_record? %>
     <% if user_verification_methods.length == 1 %>
@@ -35,7 +39,7 @@
     %>
 <% end %>
 </div>
-<div class="clearb">&nbsp;</div>
+
 
 <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
 

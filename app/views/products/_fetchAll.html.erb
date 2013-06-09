@@ -1,7 +1,8 @@
 <%= hidden_field_tag :direction, params[:direction] %>
 <%= hidden_field_tag :sort, params[:sort] %>
 
-<h5><%= t("all_records") %> (<%= @o_all.size %>)</h5>
+<fieldset>
+  <legend id="pg_user label"><%= t("all_records") %> (<%= @o_all.size %>)</legend>
 <table>
   <tr>
     <th width="20%"><%= sortable "name", t("name") %></th>
@@ -26,7 +27,7 @@
   <tr><th colspan="6"><%= t("record_not_found") %></th></tr>
 <% end %>   
 </table>
-
+</fieldset>
 <script type="text/javascript">
   $('.detach').click(function() {
       var r=confirm("Are you sure to delete ?");

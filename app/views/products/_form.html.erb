@@ -1,25 +1,29 @@
-<div class="loginfom frontform">
+<div class="box">
+  <fieldset>
   <%= form_for @o_single do |f| %>
-    <p>
-      <%= t("name") %>
-  	</p>	
-  	<%= f.text_field :name %>	
-  	
-    <p>
-      <%= t("code") %><i class="redStart">*</i>
+    
+  	<div class="grid_4 input">
+  	 <label class="lbl"><%= t("name") %></label>  	
+  	 <%= f.text_field :name %>
+  	</div> 	
+  
+    <div class="grid_4 input">
+      <label class="lbl"><%= t("code") %><i class="redStart">*</i></label>
       <% if @o_single.errors[:code].any? %>
         <span class="text-error"> 
           <%= t('field_required') %>
         </span>
-      <% end %>
-    </p>  
-    <%= f.text_field :code %> 
-  
-    <p>
+      <% end %>            
+      <%= f.text_field :code %> 
+    </div>
+    <div class="grid_4"></div>
+    <div class="grid_2">
       <%= f.submit :value => t("save"), :class => "btn btn-info" %>
+    </div>  
+     <div class="grid_2" style="margin-top: 5px;float: left;"> 
       <%= link_to t("back"), products_path, :class => "btn btn-info" %>
-    </p>
+    </div>
   <% end %>
-  <div class="cl"></div>
+</fieldset>
 </div>
 

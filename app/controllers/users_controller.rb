@@ -27,11 +27,11 @@ class UsersController < ApplicationController
   access_control do
     default :deny
 
-    allow :users_browser, :to => [:index, :show]
-    allow :users_registrant, :to => [:new, :create]
-    allow :users_manager, :to => [:new, :create, :edit, :update]
+    allow :users_browser, :to => [:index, :show, :createdownload, :createPDF]
+    allow :users_registrant, :to => [:new, :create, :createdownload, :createPDF]
+    allow :users_manager, :to => [:new, :create, :edit, :update, :createdownload, :createPDF]
     allow :users_destroyer, :to => [:destroy]
-    allow :users_finder, :to => [:find, :search, :show]
+    allow :users_finder, :to => [:find, :search, :show, :createdownload, :createPDF]
   end
 
   STATS_PERIOD = 14
@@ -198,18 +198,19 @@ class UsersController < ApplicationController
   def createdownload
 	  user = User.find(params[:id])
 		
-		cpe= CpeTemplate.find(user.xuser.inst_cpe_modello);
+		cpe= CpeTemplate.find(user.cpe_template_id);
 		template = cpe.template
-		template=template.gsub("<CPE_NAME>",user.xuser.inst_cpe_username)
-		template=template.gsub("<CPE_PASSWORD>",user.xuser.inst_cpe_password)
-		file_name = cpe.name,".txt"
+		template=template.gsub("<CPE_NAME>",user.inst_cpe_username)
+		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
+		puts file_name = cpe.name.to_s + ".txt"
 		t = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
 		t.write(template)
 		t.close
+		
 		send_file t.path, :type => 'text/plain; charset=utf-8',
 	                             :disposition => 'attachment',
 	                             :filename => file_name
-	  end
+	end
 
   def createPDF
   	user = User.find(params[:id])
@@ -255,32 +256,32 @@ class UsersController < ApplicationController
    	# U' \xd9
    	pdf.move_pointer(34)
    	#numero contratto e tipo
-   	pdf.text "<b>Contratto di Utenza "+ (user.xuser.is_company ? "Persone giuridiche" : "Persone fisiche") +"</b> - <b>Codice utente:</b> "+sprintf('%010d', user.id), :font_size => 10, :justification => :left
+   	pdf.text "<b>Contratto di Utenza "+ (user.is_company ? "Persone giuridiche" : "Persone fisiche") +"</b> - <b>Codice utente:</b> "+sprintf('%010d', user.id), :font_size => 10, :justification => :left
    	
    	
    	pdf.move_pointer(12)
    	#Dati azienda
-   	if user.xuser.is_company
+   	if user.is_company
 	   	pdf.text "<b>Informazioni Azienda</b>", :font_size => 8, :justification => :left, :leading => 12
 	   	
-	   	pdf.text "<C:bullet /><b>Ragione sociale:</b> "+user.xuser.pg_ragione_sociale, :font_size => 8
-	   	pdf.text "<C:bullet /><b>Partita Iva:</b> "+user.xuser.pg_partita_iva
-	   	pdf.text "<C:bullet /><b>Indirizzo legale:</b> "+user.xuser.pg_indirizzo+" "+user.xuser.pg_cap+" - "+user.xuser.pg_comune
+	   	pdf.text "<C:bullet /><b>Ragione sociale:</b> "+user.pg_ragione_sociale, :font_size => 8
+	   	pdf.text "<C:bullet /><b>Partita Iva:</b> "+user.pg_partita_iva
+	   	pdf.text "<C:bullet /><b>Indirizzo legale:</b> "+user.pg_indirizzo+" "+user.pg_cap+" - "+user.pg_comune
    		pdf.text " "
    	end
    	#Dati personali
    	pdf.text "<b>Informazioni Utente</b>", :font_size => 8, :justification => :left, :leading => 12
    	pdf.text "<C:bullet /><b>Cognome:</b> "+user.surname, :font_size => 8,:left => 20
    	pdf.text "<C:bullet /><b>Nome:</b> "+user.given_name,:left => 20
-   	pdf.text "<C:bullet /><b>Nato il:</b> "+user.birth_date.strftime( '%d %m %Y' ) + " <b>a:</b> "+user.xuser.pf_luogo_di_nascita,:left => 20
+   	pdf.text "<C:bullet /><b>Nato il:</b> "+user.birth_date.strftime( '%d %m %Y' ) + " <b>a:</b> "+user.pf_luogo_di_nascita,:left => 20
    	pdf.text "<C:bullet /><b>Residente in:</b> "+ user.address + " " + user.zip + " - " + user.city,:left => 20
-   	pdf.text "<C:bullet /><b>Codice fiscale:</b> "+ user.xuser.pf_cf,:left => 20
+   	pdf.text "<C:bullet /><b>Codice fiscale:</b> "+ user.pf_cf,:left => 20
    	pdf.text "<C:bullet /><b>Telefono:</b> "+user.mobile_prefix+" "+user.mobile_suffix,:left => 20
-   	pdf.text "<C:bullet /><b>IBAN:</b> "+user.xuser.iban,:left => 20
+   	pdf.text "<C:bullet /><b>IBAN:</b> "+user.iban,:left => 20
    	#Dati installazione
    	pdf.text "<b>Dati di installazione</b>", :font_size => 8, :justification => :left, :leading => 12
    	pdf.text "Il servizio sar\xe1 fornito presso l'indirizzo fornito dal cliente:" , :font_size => 6
-		pdf.text "<b>"+user.xuser.inst_indirizzo+ " " + user.xuser.inst_cap+"</b>", :justification => :center, :leading => 12, :font_size => 8
+		pdf.text "<b>"+user.inst_indirizzo+ " " + user.inst_cap+"</b>", :justification => :center, :leading => 12, :font_size => 8
 		# Contratto
 		pdf.text "<b>Accettazione condizioni di contratto e trattamento dati personali</b>", :font_size => 8, :justification => :left, :leading => 12
 		pdf.text "L\'Utente, congiuntamente alla seguente accettazione, dichiara espressamente di aver preso visione e di approvare l\'informativa seguente:",:font_size => 6, :justification => :left 
