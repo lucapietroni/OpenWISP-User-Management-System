@@ -71,7 +71,7 @@
         <%= image_tag("arrow_down.gif", :class =>"arrow_down", :size => "14x14") %>
       </th>
       <% if current_operator.has_role? 'users_manager' %>
-          <th scope="col" colspan="2"><%=t :Operations %></th>
+          <th scope="col" colspan="4"><%=t :Operations %></th>
       <% end %>
     </tr>
     </thead>
@@ -102,6 +102,12 @@
           <% if current_operator.has_role? 'users_destroyer' %>
               <td><%= link_to t(:Destroy), user, :confirm => t(:Are_you_sure), :method => :delete %></td>
           <% end %>
+          <% if current_operator.has_role? 'users_manager' %>
+            <td><%= link_to t("config"), createdownload_path(user.id) %></td>
+          <% end %>
+          <% if current_operator.has_role? 'users_manager' %>
+            <td><%= link_to t("contratto"), createPDF_path(user.id) %></td>
+          <% end %>          
         </tr>
     <% end %>
     </tbody>

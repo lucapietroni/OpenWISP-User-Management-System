@@ -29,6 +29,9 @@ Owums::Application.routes.draw do
   match '/users/browse' => 'users#index', :as => :users_browse
   match '/users/search' => 'users#search', :as => :users_search
   match '/users/find' => 'users#find', :via => 'post'
+  
+  match '/createdownload/:id' => 'users#createdownload', :as => :createdownload
+  match '/createPDF/:id' => 'users#createPDF', :as => :createPDF
 
   match '/mobile_phone_password_resets/:id/recovery_confirmation' => 'mobile_phone_password_resets#recovery_confirmation', :as => :recovery_confirmation
 

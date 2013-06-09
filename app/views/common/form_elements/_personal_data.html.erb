@@ -48,11 +48,13 @@
     <%= form.input :state, :collection => countries, :prompt => false %>
   </div>
   <div class="grid_4">
-    <%= form.input :tax_code %>
+    <strong><%= form.label :pf_cf, t("pf_cf") %></strong>  
+    <%= form.text_field :pf_cf %>
   </div>
   <div class="grid_4">
-    <%= form.input :vat_number %>
-  </div>  
+    <strong><%= form.label :pg_partita_iva, t("pg_partita_iva") %></strong>  
+    <%= form.text_field :pg_partita_iva %>
+  </div>
   <div class="grid_4">  
     <%= form.input :iban %>
   </div>  
@@ -120,23 +122,22 @@
 <fieldset>
   <legend id="pg_user label"><%= t("dati_azienda") %></legend>
   <div class="grid_4">
-    <%= form.input :pg_ragione_sociale %>
+    <strong><%= form.label :pg_ragione_sociale, t("pg_ragione_sociale") %></strong>  
+    <%= form.text_field :pg_ragione_sociale %>
   </div>  
-  <div class="grid_4">  
-    <%= form.input :pg_partita_iva %>
+
+  <div class="grid_4">
+    <strong><%= form.label :pg_cap, t("pg_cap") %></strong>  
+    <%= form.text_field :pg_cap %>
   </div>  
-  <div class="grid_4">  
-    <%= form.input :pf_cf %>
-  </div>  
-  <div class="grid_4">  
-    <%= form.input :pg_cap %>
-  </div>  
-  <div class="grid_4">  
-    <%= form.input :pf_luogo_di_nascita %>
-  </div>  
-  <div class="grid_8">
-    <%= form.input :pg_indirizzo %>
-  </div>  
+  <div class="grid_4">
+    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
+    <%= form.text_field :pf_luogo_di_nascita %>
+  </div>      
+  <div class="grid_4">
+    <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
+    <%= form.text_field :pg_indirizzo %>
+  </div>    
 </fieldset>
 
 <fieldset>
@@ -146,18 +147,29 @@
     <%= form.select :cpe_template_id, options_for_select([t("select_cpe_template")] + CpeTemplate.all.collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)) %>
   </div>  
   <div class="grid_4">
-    <%= form.input :inst_cpe_mac %>
-  </div>  
-  <div class="grid_4">  
-    <%= form.input :inst_cpe_username %>
-  </div>  
-  <div class="grid_4">  
-    <%= form.input :inst_cpe_password %>
-  </div>  
-  <div class="grid_4">  
-    <%= form.input :inst_cap %>
+    <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  
+    <%= form.text_field :inst_cpe_mac %>
   </div>
-  <div class="grid_8">   
-    <%= form.input :inst_indirizzo %>
+  <div class="grid_4">
+    <strong><%= form.label :inst_cpe_username, t("inst_cpe_username") %></strong>  
+    <%= form.text_field :inst_cpe_username %>
+  </div>
+  <div class="grid_4">
+    <strong><%= form.label :inst_cpe_password, t("inst_cpe_password") %></strong>  
+    <%= form.text_field :inst_cpe_password %>
+  </div>
+  <div class="grid_3">
+    <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
+    <%= form.text_field :inst_indirizzo %>
   </div>  
+  <div class="grid_3">
+    <strong><%= form.label :pg_comune, t("pg_comune") %></strong>  
+    <%= form.text_field :pg_comune %>
+  </div>      
+  <div class="grid_2">
+    <strong><%= form.label :inst_cap, t("inst_cap") %></strong>  
+    <%= form.text_field :inst_cap %>
+  </div>        
+
+
 </fieldset>  

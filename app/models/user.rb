@@ -36,8 +36,8 @@ class User < AccountCommon
 
   # Validations
   validate :verification_method_inclusion
-  validates :tax_code, :presence => {:message => "can't be blank"}
-  validates :vat_number, :presence => {:message => "can't be blank"}
+  validates :pf_cf, :presence => {:message => "can't be blank"}
+  validates :pg_partita_iva, :presence => {:message => "can't be blank"}
   
   validates :iban, :presence => {:message => "can't be blank"}
 
@@ -54,7 +54,7 @@ class User < AccountCommon
                   :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids,
                   :tax_code, :vat_number, :iban, :product_id, :cpe_template_id, :pg_ragione_sociale, :pg_partita_iva,
                   :pg_indirizzo, :pg_cap, :pf_cf, :pf_luogo_di_nascita, :inst_indirizzo, :inst_cap, :inst_cpe_modello,
-                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note
+                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note, :is_company, :pg_comune
 
   # Custom validations
 
