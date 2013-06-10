@@ -64,7 +64,7 @@
   </div>
   <div class="clearb">&nbsp;</div>
 <% end %>       
-<%= render 'common/form_elements/personal_data', :form => f, :owner => user, :countries => countries, :radius_groups => radius_groups %>
+<%= render 'common/form_elements/personal_data_backend', :form => f, :owner => user, :countries => countries, :radius_groups => radius_groups, :current_operator => current_operator %>
 <div class="grid_3">
   <%= f.button :submit %>
 </div>    
