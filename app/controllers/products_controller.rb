@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
   helper_method :sort_column, :sort_direction
   before_filter :require_operator
-  before_filter :find_record, only: [:show, :edit, :update, :destroy]
+  before_filter :find_record, :only => [:show, :edit, :update, :destroy]
 
   def index
     @o_all = get_records(params[:search])
