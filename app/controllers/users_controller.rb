@@ -498,9 +498,9 @@ class UsersController < ApplicationController
   
   def create_user_role(user_id)
   	if current_operator.is_admin  
-			OperatorUser.create(user_id: user_id, operator_id: params[:operator_id])
+			OperatorUser.create(:user_id => user_id, :operator_id => params[:operator_id])
 		else	
-			OperatorUser.create(user_id: user_id, operator_id: current_operator.id)
+			OperatorUser.create(:user_id => user_id, :operator_id => current_operator.id)
 		end	
   end	
 end
