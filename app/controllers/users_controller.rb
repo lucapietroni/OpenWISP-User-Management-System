@@ -129,7 +129,8 @@ class UsersController < ApplicationController
     	if current_operator.is_admin
 	    	operator_user = @user.operator_users.first
 	    	if operator_user
-	    		operator_user.update_attributes(operator_id: params[:operator_id])
+	    		operator_user.operator_id = params[:operator_id]
+	    		operator_user.save
 	    	end
 	    end	
     	@user.pg_partita_iva = pg_partita_iva_tmp
