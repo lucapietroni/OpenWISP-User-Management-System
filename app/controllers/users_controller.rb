@@ -122,6 +122,10 @@ class UsersController < ApplicationController
     @radius_groups = RadiusGroup.all
 		
     if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
+    	operator_user = @user.operator_users.first
+    	if operator_user
+    		operator_user.update_attributes(operator_id: params[:operator_id])
+    	end	
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
 
@@ -465,10 +469,18 @@ class UsersController < ApplicationController
     page = params[:page].nil? ? 1 : params[:page]
 
     if search.nil?
-      conditions = ["operator_users.operator_id = ?", current_operator.id]
+    	if current_operator.is_admin
+    		conditions = []
+    	else
+      	conditions = ["operator_users.operator_id = ?", current_operator.id]
+      end	
     else
       search.gsub(/\\/, '\&\&').gsub(/'/, "''")
-      conditions = ["(given_name LIKE ? OR surname LIKE ? OR username LIKE ? OR CONCAT(mobile_prefix,mobile_suffix) LIKE ? OR CONCAT_WS(' ', given_name, surname) LIKE ? OR CONCAT_WS(' ', surname, given_name) LIKE ?) AND operator_users.operator_id = ?", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", current_operator.id]
+      if current_operator.is_admin
+      	conditions = ["(given_name LIKE ? OR surname LIKE ? OR username LIKE ? OR CONCAT(mobile_prefix,mobile_suffix) LIKE ? OR CONCAT_WS(' ', given_name, surname) LIKE ? OR CONCAT_WS(' ', surname, given_name) LIKE ?)", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%"]
+      else
+      	conditions = ["(given_name LIKE ? OR surname LIKE ? OR username LIKE ? OR CONCAT(mobile_prefix,mobile_suffix) LIKE ? OR CONCAT_WS(' ', given_name, surname) LIKE ? OR CONCAT_WS(' ', surname, given_name) LIKE ?) AND operator_users.operator_id = ?", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", current_operator.id]
+      end	
     end
 
     @total_users = User.joins(:operator_users).count :conditions => conditions
@@ -476,6 +488,6 @@ class UsersController < ApplicationController
   end
   
   def create_user_role(user_id)  
-  	OperatorUser.create(user_id: user_id, operator_id: current_operator.id)
+		OperatorUser.create(user_id: user_id, operator_id: params[:operator_id])
   end	
 end
