@@ -36,8 +36,8 @@ class User < AccountCommon
 
   # Validations
   validate :verification_method_inclusion
-  validates :pf_cf, :presence => {:message => "can't be blank"}
-  validates :pg_partita_iva, :presence => {:message => "can't be blank"}
+  validates :pf_cf, :codice_fiscale_format => true
+  validates :pg_partita_iva, :partita_iva_format => true
   
   validates :iban, :presence => {:message => "can't be blank"}
 

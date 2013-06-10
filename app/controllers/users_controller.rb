@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class UsersController < ApplicationController
 	require 'rubygems'
-	
+	require 'italian_job'
 	require 'iban-check'
   require 'pdf/writer'
   require 'pdf/simpletable'	
@@ -82,6 +82,8 @@ class UsersController < ApplicationController
         format.xml { render :xml => @user, :status => :created }
       end
     else
+    	update_validation_errors(@user)
+    	check_tax_vat_iban_number(@user)    	
       respond_to do |format|
         format.html { render :action => :new }
         format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
@@ -128,12 +130,34 @@ class UsersController < ApplicationController
         format.xml { render :nothing => true, :status => :ok }
       end
     else
+    	update_validation_errors(@user)
+    	check_tax_vat_iban_number(@user)
       respond_to do |format|
         format.html { render :action => :edit }
         format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
       end
     end
   end
+
+  def update_validation_errors(user)
+    if user.errors.has_key?(:pf_cf) && user.errors[:pf_cf].include?("Invalid format")
+      user.errors.delete(:pf_cf)
+      user.errors.add(:pf_cf, t("codice_fiscale_invalid_format"))
+    end
+    if user.errors.has_key?(:pf_cf) && user.errors[:pf_cf].include?("can't be blank")
+      user.errors.delete(:pf_cf)
+      user.errors.add(:pf_cf, t("codice_fiscale_empty"))
+    end
+    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("Invalid format")
+      user.errors.delete(:pg_partita_iva)
+      user.errors.add(:pg_partita_iva, t("partita_iva_invalid_format"))
+    end
+    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("can't be blank")
+      user.errors.delete(:pg_partita_iva)
+      user.errors.add(:pg_partita_iva, t("partita_iva_empty"))
+    end 
+  end
+
 
   def destroy
     @user.destroy
@@ -148,15 +172,13 @@ class UsersController < ApplicationController
     begin
       iban = Iban::IbanCheck.new :iban => params[:user][:iban]
     rescue Exception
-			flash.keep[:error] = t("iban_number_is_invalid")
 			obj.errors.add(:iban, t("iban_number_is_invalid"))
 			return false
     end	
 	
 		if iban.valid?
 			return true
-		else	
-			flash.keep[:error] = t("iban_number_is_invalid")
+		else
 			obj.errors.add(:iban, t("iban_number_is_invalid"))
 			return false
 		end
@@ -276,7 +298,7 @@ class UsersController < ApplicationController
    	pdf.text "<C:bullet /><b>Nato il:</b> "+user.birth_date.strftime( '%d %m %Y' ) + " <b>a:</b> "+user.pf_luogo_di_nascita,:left => 20
    	pdf.text "<C:bullet /><b>Residente in:</b> "+ user.address + " " + user.zip + " - " + user.city,:left => 20
    	pdf.text "<C:bullet /><b>Codice fiscale:</b> "+ user.pf_cf,:left => 20
-   	pdf.text "<C:bullet /><b>Telefono:</b> "+user.mobile_prefix+" "+user.mobile_suffix,:left => 20
+   	pdf.text "<C:bullet /><b>Telefono:</b> "+user.mobile_prefix.to_s+" "+user.mobile_suffix.to_s,:left => 20
    	pdf.text "<C:bullet /><b>IBAN:</b> "+user.iban,:left => 20
    	#Dati installazione
    	pdf.text "<b>Dati di installazione</b>", :font_size => 8, :justification => :left, :leading => 12
