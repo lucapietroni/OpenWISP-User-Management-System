@@ -1,6 +1,6 @@
 select {
     text-align:center;
-    margin-left: 8px;
+    margin-left: 0px;
     width:99%;
 }
 
@@ -220,7 +220,7 @@ li > .off {
 }
 
 .hint {
-    margin: 0 5px 3px 0;
+    margin: 0 23px 3px 0;
     float:right;
 }
 

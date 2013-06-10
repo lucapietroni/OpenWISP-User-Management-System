@@ -19,13 +19,8 @@
 <div class="grid_4">
   <%= f.input :username, :disabled => !user.new_record? %>
 </div>
-<div class="grid_8"></div>
-<div class="grid_4">
-  <strong><%= f.label :is_company, t("is_company") %></strong>  
-  <%= f.check_box :is_company %>
-</div>
-<div class="clearb">&nbsp;</div>
-<div class="grid_8">  
+<div class="grid_6"></div>
+<div class="grid_5">  
 <% if user.new_record? %>
     <% if user_verification_methods.length == 1 %>
         <%= f.input :verification_method, :as => :hidden %>
@@ -39,11 +34,18 @@
     %>
 <% end %>
 </div>
+<div class="grid_4" style="margin-top: 10px;">
+  <strong><%= f.label :is_company, t("is_company") %></strong>  
+  <%= f.check_box :is_company %>
+</div>
+<div class="grid_8"></div>
+
 
 
 <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
 
 <%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
+<div class="grid_8">&nbsp;</div>
 <div class="grid_8">
 <% if user.new_record? %>
     <%= f.input :verified, :as => :hidden, :value => 1 %>

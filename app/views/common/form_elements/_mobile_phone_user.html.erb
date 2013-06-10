@@ -22,20 +22,20 @@
   
 
   <div class="block">
-    <div class="grid_4">
+    <div class="grid_5">
       <span><%= form.label :mobile_phone %></span>
       <%= form.input :mobile_prefix, :collection => prefixes, :prompt => t(:select_prefix) %>
     </div>
 
     <div class="grid_5">
-      <span style="float:right"><%=t :mobile_phone, :scope => [:simple_form, :hints] %></span>
+      <span style="float:left"><%=t :mobile_phone, :scope => [:simple_form, :hints] %></span>
       <%= form.input :mobile_suffix %>
     </div>
   </div>
 
   
   <div class="block">
-    <div class="grid_4">
+    <div class="grid_5">
       <%= form.label :mobile_phone_confirmation %>
       <%= form.input :mobile_prefix_confirmation, :collection => prefixes, :prompt => t(:select_prefix) %>
     </div>

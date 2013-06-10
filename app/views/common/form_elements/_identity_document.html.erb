@@ -40,19 +40,17 @@
             </div>
         <% else %>
             <% if owner.verify_with_document? %>
-                <strong><%=t :Document_photo %></strong><br/>
+                
 
                 <%# We have an already existing User %>
-                <p class="center"><%= document_of owner, :inline => true %></p>
                 <div class="grid_4"> 
                   <%= form.input :image_file %>
                 </div>  
+                <div class="grid_8">
+                  <%= document_of owner, :inline => true %>
+                </div>                  
                 <%= form.input :image_file_temp, :as => :hidden %>
             <% end %>
         <% end %>
     <% end %>
 <% end %>
-<div class="clearb">&nbsp;</div>
-<div class="clearb">&nbsp;</div>
-<div class="clearb">&nbsp;</div>
-<div class="clearb">&nbsp;</div>

@@ -1,4 +1,12 @@
 en:
+  activerecord:
+    errors:
+      codice_fiscale:
+        empty: "Can't be blank"
+        invalid_format: "Invalid format"
+      partita_iva:
+        empty: "Can't be blank" 
+        invalid_format: "Invalid format"
   Account_disabled: "Account disabled"
   Account_disable_confirmation: "If you disable your account, you won't be able to login. You can enable your account again by repeating the account confirmation procedure."
   Account_registered: "Account signed up successfully"
@@ -389,3 +397,7 @@ If you still have problems resetting the password, try repeating the procedure"
   pg_comune: "Comune"
   contratto: "Contratto"
   config: "Config"
+  codice_fiscale_invalid_format: "Invalid format"
+  codice_fiscale_empty: "can't be blank" 
+  partita_iva_invalid_format: "Invalid format"
+  partita_iva_empty:: "can't be blank"  

@@ -22,7 +22,7 @@
     <%= simple_form_for @user, :html => {:multipart => true} do |f| %>
         <fieldset>
           <legend><%=t :Create_user %></legend>
-          <p><%= f.error_messages %></p>
+          <p><%#= f.error_messages %></p>
 
           <%= render 'form', :f => f, :user => @user, :radius_groups => @radius_groups, :countries => @countries, :mobile_prefixes => @mobile_prefixes %>
         </fieldset>

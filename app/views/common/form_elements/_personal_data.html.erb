@@ -24,52 +24,16 @@
   <div class="grid_4">
     <%= form.input :surname, :disabled => !owner.new_record? %>
   </div>  
-  <div class="grid_8"> 
-  <%= form.input :birth_date, :as => :date,
-                 :disabled => !owner.new_record?,
-                 :start_year => Date.today.year - 90,
-                 :end_year => Date.today.year - 14,
-                 :order => [:day, :month, :year],
-                 :prompt => true
-  %>
-  </div>
-    
-  <div class="grid_4">   
-    <%= form.input :address %>
-  </div>
   
-  <div class="grid_4">
-    <%= form.input :zip %>
-  </div>  
-  <div class="grid_4">
-    <%= form.input :city %>
-  </div>  
-  <div class="grid_4">
-    <%= form.input :state, :collection => countries, :prompt => false %>
-  </div>
-  <div class="grid_4">
-    <strong><%= form.label :pf_cf, t("pf_cf") %></strong>  
-    <%= form.text_field :pf_cf %>
-  </div>
-  <div class="grid_4">
-    <strong><%= form.label :pg_partita_iva, t("pg_partita_iva") %></strong>  
-    <%= form.text_field :pg_partita_iva %>
-  </div>
+  
   <div class="grid_4">  
-    <%= form.input :iban %>
-  </div>  
-  <div class="grid_4">
-    <strong><%= form.label :product_id, t(:product) %></strong><br />
-    <%= form.select :product_id, options_for_select([t("select_product")] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
-  </div>  
-  
-  <div class="grid_8">  
     <%= form.input :email %>
   </div>
-  <div class="grid_4">
+  
+  <div class="grid_4" style="margin-top: 35px;">
     <%= form.input :email_confirmation %>
   </div>
-  
+  <div class="grid_7"></div>
     <div class="grid_4">
       <% if current_operator %>
           <% content_for :after_defaults do %>
@@ -98,7 +62,51 @@
           <%= form.input :password_confirmation %>
         </div>  
       </div>  
-  <% end %>
+  <% end %>  
+  
+  
+  
+  <div class="grid_4"> 
+  <%= form.input :birth_date, :as => :date,
+                 :disabled => !owner.new_record?,
+                 :start_year => Date.today.year - 90,
+                 :end_year => Date.today.year - 14,
+                 :order => [:day, :month, :year],
+                 :prompt => true
+  %>
+  </div>
+    
+  <div class="grid_4">
+    <strong><%= form.label :product_id, t(:product) %></strong><br />
+    <%= form.select :product_id, options_for_select([t("select_product")] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+  </div>     
+    <div class="clearb"></div>
+  <div class="grid_4">   
+    <%= form.input :address %>
+  </div>
+  
+  <div class="grid_4">
+    <%= form.input :zip %>
+  </div>  
+  <div class="grid_4">
+    <%= form.input :city %>
+  </div>  
+  <div class="grid_4">
+    <%= form.input :state, :collection => countries, :prompt => false %>
+  </div>
+  
+  <div class="grid_4">  
+    <%= form.input :pf_cf, label: t("pf_cf") %>
+  </div>
+  <div class="grid_4">
+    <%= form.input :pg_partita_iva, label: t("pg_partita_iva") %>
+  </div>
+  <div class="grid_4">  
+    <%= form.input :iban %>
+  </div>  
+  <div id="mydiv">
+    <iframe id="frame" src="" width="100%" height="300"></iframe>
+  </div>   
 </fieldset>
 
 <fieldset>
@@ -173,3 +181,9 @@
 
 
 </fieldset>  
+<script>
+$("#user_iban").keyup(function () { 
+  $("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+});  
+$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+</script>
