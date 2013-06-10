@@ -126,10 +126,12 @@ class UsersController < ApplicationController
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
 		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20] 
     if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
-    	operator_user = @user.operator_users.first
-    	if operator_user
-    		operator_user.update_attributes(operator_id: params[:operator_id])
-    	end
+    	if current_operator.is_admin
+	    	operator_user = @user.operator_users.first
+	    	if operator_user
+	    		operator_user.update_attributes(operator_id: params[:operator_id])
+	    	end
+	    end	
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.save(:validate=>false)
       current_account_session.destroy unless current_account_session.nil?
@@ -493,7 +495,11 @@ class UsersController < ApplicationController
     @users = User.joins(:operator_users).select("users.*, operator_users.operator_id").where(conditions).order(sort).page(page).per(items_per_page)
   end
   
-  def create_user_role(user_id)  
-		OperatorUser.create(user_id: user_id, operator_id: params[:operator_id])
+  def create_user_role(user_id)
+  	if current_operator.is_admin  
+			OperatorUser.create(user_id: user_id, operator_id: params[:operator_id])
+		else	
+			OperatorUser.create(user_id: user_id, operator_id: current_operator.id)
+		end	
   end	
 end

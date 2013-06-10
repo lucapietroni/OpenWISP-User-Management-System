@@ -31,7 +31,7 @@ class OperatorsController < ApplicationController
   	if current_operator.is_admin
     	@operators = Operator.all :order => 'login ASC'
     else	
-    	@operators = Operator.where(id: current_operator.id).order('login ASC')
+    	@operators = Operator.where(:id => current_operator.id).order('login ASC')
     end	
   end
 
