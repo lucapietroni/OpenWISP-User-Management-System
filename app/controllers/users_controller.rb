@@ -70,8 +70,11 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		
+    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
+		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]		
     if @user.save and check_tax_vat_iban_number(@user)
+    	@user.pg_partita_iva = pg_partita_iva_tmp
+    	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
       # Associate user with the operator the current operator
@@ -120,12 +123,15 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		
+    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
+		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20] 
     if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
     	operator_user = @user.operator_users.first
     	if operator_user
     		operator_user.update_attributes(operator_id: params[:operator_id])
-    	end	
+    	end
+    	@user.pg_partita_iva = pg_partita_iva_tmp
+    	@user.save(:validate=>false)
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
 
