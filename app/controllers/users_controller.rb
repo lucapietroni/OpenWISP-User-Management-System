@@ -59,6 +59,8 @@ class UsersController < ApplicationController
   def create
   	#verify_number = check_tax_vat_iban_number
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
+    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
+		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
     @user = User.new(params[:user])
 		check_tax_vat_iban_number(@user)
     # Parameter anti-tampering
@@ -70,8 +72,7 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
-		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]		
+		
     if @user.save and check_tax_vat_iban_number(@user)
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.save(:validate=>false)    	
@@ -153,6 +154,7 @@ class UsersController < ApplicationController
   end
 
   def update_validation_errors(user)
+  	
     if user.errors.has_key?(:pf_cf) && user.errors[:pf_cf].include?("Invalid format")
       user.errors.delete(:pf_cf)
       user.errors.add(:pf_cf, t("codice_fiscale_invalid_format"))
@@ -161,6 +163,7 @@ class UsersController < ApplicationController
       user.errors.delete(:pf_cf)
       user.errors.add(:pf_cf, t("codice_fiscale_empty"))
     end
+    
     if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("Invalid format")
       user.errors.delete(:pg_partita_iva)
       user.errors.add(:pg_partita_iva, t("partita_iva_invalid_format"))
@@ -168,7 +171,7 @@ class UsersController < ApplicationController
     if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("can't be blank")
       user.errors.delete(:pg_partita_iva)
       user.errors.add(:pg_partita_iva, t("partita_iva_empty"))
-    end 
+    end
   end
 
 

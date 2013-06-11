@@ -30,7 +30,9 @@ class OperatorsController < ApplicationController
   def index
   	if current_operator.is_admin
     	@operators = Operator.all :order => 'login ASC'
-    else	
+    elsif current_operator.has_role? 'operators_manager'
+    	@operators = Operator.where(:is_admin => 0).order('login ASC')
+    else		
     	@operators = Operator.where(:id => current_operator.id).order('login ASC')
     end	
   end

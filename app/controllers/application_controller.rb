@@ -34,7 +34,8 @@ class ApplicationController < ActionController::Base
 
   # Additional gem/plugin functionality
   has_mobile_fu
-
+  # Controllers for which there is no mobile layout
+  WITHOUT_MOBILE_TEMPLATE = %w(operators operator_sessions users configurations stats)
 
   def toggle_mobile
     session[:mobile_view] = !session[:mobile_view]
@@ -78,6 +79,10 @@ class ApplicationController < ActionController::Base
     if I18n.available_locales.include? locale.to_sym
       I18n.locale = session[:locale] = locale
     end
+  end
+
+  def has_mobile?
+    !WITHOUT_MOBILE_TEMPLATE.include?(controller_name)
   end
 
   def current_account_session

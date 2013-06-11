@@ -16,6 +16,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #%>
+<div class="grid_8" style="margin-top: 10px;">
+  <strong><%= form.label :is_company, t("is_company") %></strong>  
+  <%= form.check_box :is_company %>
+</div>
+
+
+<% block_none = owner.is_company ? 'display:block' : 'display:none' %>
+<fieldset style="<%= block_none %>;" id="company_fields">
+  <legend id="pg_user label"><%= t("dati_azienda") %></legend>
+  <div class="grid_4">
+    <%= form.input :pg_ragione_sociale, :label => t("pg_ragione_sociale") %>
+  </div>  
+  <div class="grid_4">
+    <%= form.input :pg_partita_iva, :label => t("pg_partita_iva") %>
+  </div>
+  <div class="grid_3">
+    <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
+    <%= form.text_field :pg_indirizzo %>
+  </div>   
+  <div class="grid_3">
+    <%= form.input :pg_comune, :label => t("pg_comune") %>
+  </div>       
+  <div class="grid_2">
+    <%= form.input :pg_cap, :label => t("pg_cap") %>
+  </div>
+</fieldset>
+
+
 <fieldset>
   <legend id="pg_userlabel"><%= t("user_datas") %></legend>
   <div class="grid_4">
@@ -24,6 +52,7 @@
   <div class="grid_4">
     <%= form.input :surname, :disabled => !owner.new_record? %>
   </div>  
+  
   
   
   <div class="grid_4">  
@@ -64,7 +93,10 @@
       </div>  
   <% end %>  
   
-  
+  <div class="grid_4">
+    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
+    <%= form.text_field :pf_luogo_di_nascita %>
+  </div>        
   
   <div class="grid_4"> 
   <%= form.input :birth_date, :as => :date,
@@ -76,11 +108,15 @@
   %>
   </div>
     
+  <div class="grid_4">  
+    <%= form.input :pf_cf, :label => t("pf_cf") %>
+  </div>    
+    
   <div class="grid_4">
     <strong><%= form.label :product_id, t(:product) %></strong><br />
     <%= form.select :product_id, options_for_select([t("select_product")] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
   </div>     
-    <div class="clearb"></div>
+  <div class="clearb"></div>  
   <div class="grid_4">   
     <%= form.input :address %>
   </div>
@@ -95,16 +131,16 @@
     <%= form.input :state, :collection => countries, :prompt => false %>
   </div>
   
-  <div class="grid_4">  
-    <%= form.input :pf_cf, :label => t("pf_cf") %>
-  </div>
-  <div class="grid_4">
-    <%= form.input :pg_partita_iva, :label => t("pg_partita_iva") %>
-  </div>
+
+
   <div class="grid_4">  
     <%= form.input :iban %>
   </div>  
-  <div id="mydiv">
+  <div class="grid_3" style="margin-top: 21px;float: left;">  
+    <%= link_to t(:verify), "#iban", :id => "user_iban_verify", :class => "button" %>
+  </div>    
+  
+  <div id="mydiv" style="display:none;">
     <iframe id="frame" src="" width="100%" height="300"></iframe>
   </div>   
 </fieldset>
@@ -128,27 +164,6 @@
 
 
 <fieldset>
-  <legend id="pg_user label"><%= t("dati_azienda") %></legend>
-  <div class="grid_4">
-    <strong><%= form.label :pg_ragione_sociale, t("pg_ragione_sociale") %></strong>  
-    <%= form.text_field :pg_ragione_sociale %>
-  </div>  
-
-  <div class="grid_4">
-    <strong><%= form.label :pg_cap, t("pg_cap") %></strong>  
-    <%= form.text_field :pg_cap %>
-  </div>  
-  <div class="grid_4">
-    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
-    <%= form.text_field :pf_luogo_di_nascita %>
-  </div>      
-  <div class="grid_4">
-    <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
-    <%= form.text_field :pg_indirizzo %>
-  </div>    
-</fieldset>
-
-<fieldset>
   <legend id="pg_user label"><%= t("dati_di_installazione") %></legend>
   <div class="grid_4">
     <strong><%= form.label :cpe_template_id, t(:cpe_template) %></strong><br />
@@ -158,32 +173,35 @@
     <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  
     <%= form.text_field :inst_cpe_mac %>
   </div>
-  <div class="grid_4">
-    <strong><%= form.label :inst_cpe_username, t("inst_cpe_username") %></strong>  
-    <%= form.text_field :inst_cpe_username %>
-  </div>
-  <div class="grid_4">
-    <strong><%= form.label :inst_cpe_password, t("inst_cpe_password") %></strong>  
-    <%= form.text_field :inst_cpe_password %>
-  </div>
-  <div class="grid_3">
+
+    <%= form.hidden_field :inst_cpe_username, :value => current_operator.login %>
+    <%= form.hidden_field :inst_cpe_password, :value => current_operator.crypted_password %>
+  
+  <div class="grid_6">
     <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
     <%= form.text_field :inst_indirizzo %>
   </div>  
-  <div class="grid_3">
-    <strong><%= form.label :pg_comune, t("pg_comune") %></strong>  
-    <%= form.text_field :pg_comune %>
-  </div>      
+
   <div class="grid_2">
     <strong><%= form.label :inst_cap, t("inst_cap") %></strong>  
     <%= form.text_field :inst_cap %>
   </div>        
-
+  <div class="grid_8">
+    <%= form.input :gen_note, :label => t("note") %>
+  </div> 
 
 </fieldset>  
 <script>
-$("#user_iban").keyup(function () { 
+$("#user_iban_verify").click(function () {
+  $("#mydiv").show(); 
   $("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
 });  
-$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+//$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+
+$('#user_is_company').click(function() {
+  $('#company_fields').toggle('slow', function() {
+    // Animation complete.
+  });
+});
+
 </script>
