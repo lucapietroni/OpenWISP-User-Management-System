@@ -30,7 +30,7 @@
 </fieldset>
 <script type="text/javascript">
   $('.detach').click(function() {
-      var r=confirm("<%= t('are_you_sure_to_delete') %>");
+      var r=confirm("<%= t('Are_you_sure') %>");
       if (r==true){
         $('#detach_progress_'+$(this).attr('id')).show();
       }else {
