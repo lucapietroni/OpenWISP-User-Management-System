@@ -1,6 +1,7 @@
 .bundle
 config/database.yml
 db/*.sqlite3
+tmp
 db/schema.rb
 *.orig
 patch*

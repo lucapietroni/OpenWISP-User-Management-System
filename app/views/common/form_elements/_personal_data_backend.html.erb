@@ -22,6 +22,7 @@
 </div>
 
 <div style="margin-top: 50px;">
+
 <% block_none = owner.is_company ? 'display:block' : 'display:none' %>
 <fieldset style="<%= block_none %>;" id="company_fields">
   <legend id="pg_user label"><%= t("dati_azienda") %></legend>
@@ -42,8 +43,8 @@
     <%= form.input :pg_cap, :label => t("pg_cap") %>
   </div>
 </fieldset></div>
-<div class="clearb">&nbsp;</div>
 
+<div class="clearb">&nbsp;</div>
 
 <fieldset>
   <legend id="pg_userlabel"><%= t("user_datas") %></legend>
@@ -86,7 +87,7 @@
     
   <div class="grid_4">
     <strong><%= form.label :product_id, t(:product) %></strong><br />
-    <%= form.select :product_id, options_for_select([t("select_product")] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+    <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
   </div>     
   <div class="clearb"></div>  
   <div class="grid_4">   
@@ -114,6 +115,7 @@
 <div class="clearb">&nbsp;</div>
 <fieldset>
   <legend id="pg_user label"><%= t("dati_di_accesso") %></legend>
+
 <div class="grid_7"></div>
     <div class="grid_4">
       <% if current_operator %>
@@ -144,6 +146,7 @@
         </div>  
       </div>  
   <% end %>
+
 <div class="grid_4">
   <% if current_operator.has_role? 'users_manager' %>
       <%= form.label :radius_groups %>
@@ -167,7 +170,8 @@
   <legend id="pg_user label"><%= t("dati_di_installazione") %></legend>
   <div class="grid_4">
     <strong><%= form.label :cpe_template_id, t(:cpe_template) %></strong><br />
-    <%= form.select :cpe_template_id, options_for_select([t("select_cpe_template")] + CpeTemplate.all.collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)) %>
+    <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.all.collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)) %>
+    
   </div>  
   <div class="grid_4">
     <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  

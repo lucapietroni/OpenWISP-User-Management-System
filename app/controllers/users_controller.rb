@@ -20,6 +20,7 @@ class UsersController < ApplicationController
 	require 'iban-check'
   require 'pdf/writer'
   require 'pdf/simpletable'	
+  require 'tempfile'
   before_filter :require_operator
   before_filter :load_user, :except => [:index, :new, :create, :search, :find]
   skip_before_filter :set_mobile_format
@@ -280,8 +281,9 @@ class UsersController < ApplicationController
 		template = cpe.template
 		template=template.gsub("<CPE_NAME>",user.inst_cpe_username)
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
-		file_name = cpe.name.to_s,".txt"
-		t = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
+		file_name = cpe.name.to_s + ".txt"
+		tm = Time.now.to_s.gsub(/\s+/, "")
+		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")
 		t.write(template)
 		t.close
 		

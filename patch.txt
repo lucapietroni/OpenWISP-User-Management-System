@@ -1,56 +1,39 @@
+diff --git a/.gitignore b/.gitignore
+index 5837756..dc1a75f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,6 +1,7 @@
+ .bundle
+ config/database.yml
+ db/*.sqlite3
++tmp
+ db/schema.rb
+ *.orig
+ patch*
 diff --git a/app/controllers/users_controller.rb b/app/controllers/users_controller.rb
-index 32b9c52..e2a3c7a 100644
+index 0e0ce50..3bd9b8b 100644
 --- a/app/controllers/users_controller.rb
 +++ b/app/controllers/users_controller.rb
-@@ -280,8 +280,7 @@ class UsersController < ApplicationController
+@@ -20,6 +20,7 @@ class UsersController < ApplicationController
+ 	require 'iban-check'
+   require 'pdf/writer'
+   require 'pdf/simpletable'	
++  require 'tempfile'
+   before_filter :require_operator
+   before_filter :load_user, :except => [:index, :new, :create, :search, :find]
+   skip_before_filter :set_mobile_format
+@@ -280,8 +281,9 @@ class UsersController < ApplicationController
  		template = cpe.template
  		template=template.gsub("<CPE_NAME>",user.inst_cpe_username)
  		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
--#		puts file_name = cpe.name.to_s + ".txt"
--		file_name = cpe.name,".txt"
+-		file_name = cpe.name.to_s,".txt"
+-		t = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
 +		file_name = cpe.name.to_s + ".txt"
- 		t = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
++		tm = Time.now.to_s.gsub(/\s+/, "")
++		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")
  		t.write(template)
  		t.close
-diff --git a/app/views/common/form_elements/_identity_document.html.erb b/app/views/common/form_elements/_identity_document.html.erb
-index f5750b9..619f1ff 100644
---- a/app/views/common/form_elements/_identity_document.html.erb
-+++ b/app/views/common/form_elements/_identity_document.html.erb
-@@ -20,31 +20,27 @@
- <% if owner.is_a? Account %>
-     <% if owner.verify_with_document? %>
-         <strong><%=t :Document_photo %></strong><br/>
--
-         <p class="center"><%= document_of owner %></p>
-     <% end %>
- <% elsif owner.is_a? User %>
-     <% if owner.can_signup_via?(AccountCommon::VERIFY_BY_DOCUMENT) %>
-         <% if owner.new_record? %>
-             <%# We have a new User %>
--            <div class="verification-block" style="display:none;">
-+            <div class="verification-block" style="display:block;">
-               <% if owner.has_image? %>
-                   <strong><%=t :Document_photo_preview %></strong><br/>
--
-                   <p class="center"><%= document_of owner, :inline => true %></p>
-               <% end %>
-               <div class="grid_4"> 
--                <%= form.input :image_file %>
-+                <%= form.input :image_file, :label => t("document_photo") %>
-               </div>  
-               <%= form.input :image_file_temp, :as => :hidden %>
-             </div>
-         <% else %>
-             <% if owner.verify_with_document? %>
--                
--
-                 <%# We have an already existing User %>
-                 <div class="grid_4"> 
--                  <%= form.input :image_file %>
-+                  <%= form.input :image_file, :label => t("document_photo") %>
-                 </div>  
-                 <div class="grid_8">
-                   <%= document_of owner, :inline => true %>
+ 		
 diff --git a/app/views/common/form_elements/_personal_data_backend.html.erb b/app/views/common/form_elements/_personal_data_backend.html.erb
 index 502dd9e..fe93a12 100644
 --- a/app/views/common/form_elements/_personal_data_backend.html.erb
@@ -108,103 +91,74 @@ index 502dd9e..fe93a12 100644
    </div>  
    <div class="grid_4">
      <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  
-diff --git a/app/views/users/_form.html.erb b/app/views/users/_form.html.erb
-index 433c0ee..eab980a 100644
---- a/app/views/users/_form.html.erb
-+++ b/app/views/users/_form.html.erb
-@@ -16,51 +16,47 @@
- # You should have received a copy of the GNU General Public License
- # along with this program.  If not, see <http://www.gnu.org/licenses/>.
- #%>
--<div class="grid_5">
--  <%= f.input :username, :disabled => !user.new_record? %>
--</div>
--<div class="grid_6"></div>
--<div class="grid_5">  
--<% if user.new_record? %>
--    <% if user_verification_methods.length == 1 %>
--        <%= f.input :verification_method, :as => :hidden %>
--    <% else %>
--        <%= f.input :verification_method, :collection => user_verification_select, :prompt => false %>
--    <% end %>
--<% else %>
--    <%= f.input :verification_method,
--                :collection => account_verification_select + user_verification_select,
--                :disabled => true
--    %>
--<% end %>
--</div>
--
--<div class="grid_8"></div>
--
--
--
--<%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
-+<fieldset>
-+  <div class="grid_4">
-+    <%= f.input :username, :disabled => !user.new_record? %>
-+  </div>
-+  <div class="grid_6"></div>
-+  
-+  <%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
-+  <div class="clearb"></div>
-+  <% if current_operator.is_admin? %>
-+    <div class="grid_4">
-+      <strong><%= t("operator") %></strong><br />
-+      <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
-+    </div>
-+  <% end %>
-+  <div class="clearb"></div>
-+  <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
-+  <div class="clearb"></div>
+diff --git a/config/environments/production.rb b/config/environments/production.rb
+index 1ead959..830ffc0 100644
+--- a/config/environments/production.rb
++++ b/config/environments/production.rb
+@@ -1,49 +1,26 @@
+ Owums::Application.configure do
+   # Settings specified here will take precedence over those in config/application.rb
  
--<%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
--<div class="grid_8">&nbsp;</div>
--<div class="grid_8">
- <% if user.new_record? %>
-+  <div class="grid_4">
-     <%= f.input :verified, :as => :hidden, :value => 1 %>
-+   </div> 
-+  <div class="grid_4">    
-     <%= f.input :active, :as => :hidden, :value => 1 %>
-+  </div>    
- <% else %>
-     <div id="user_status">
--      <%= f.input :verified %>
--      <%= f.input :active %>
-+      <div class="grid_4">
-+        <%= f.input :verified %>
-+      </div>  
-+      <div class="grid_4">  
-+        <%= f.input :active %>
-+      </div>  
-     </div>
- <% end %>
--</div>
--<% if current_operator.is_admin? %>
--  <div class="grid_5">
--    <strong><%= t("Operator") %></strong><br />
--    <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
--  </div>
--  <div class="clearb">&nbsp;</div>
--<% end %>       
-+  
-+  
-+</fieldset>
-+<div class="grid_8"></div>
+-  # The production environment is meant for finished, "live" apps.
+-  # Code is not reloaded between requests
+-  config.cache_classes = true
++  # In the development environment your application's code is reloaded on
++  # every request.  This slows down response time but is perfect for development
++  # since you don't have to restart the webserver when you make code changes.
++  config.cache_classes = false
+ 
+-  # Full error reports are disabled and caching is turned on
+-  config.consider_all_requests_local       = false
+-  config.action_controller.perform_caching = true
++  # Log error messages when you accidentally call methods on nil.
++  config.whiny_nils = true
+ 
+-  # Specifies the header that your server uses for sending files
+-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
++  # Show full error reports and disable caching
++  config.consider_all_requests_local       = true
++  config.action_view.debug_rjs             = true
++  config.action_controller.perform_caching = false
+ 
+-  # For nginx:
+-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
++  # Don't care if the mailer can't send
++  config.action_mailer.raise_delivery_errors = false
+ 
+-  # If you have no front-end server that supports something like X-Sendfile,
+-  # just comment this out and Rails will serve the files
++  # Print deprecation notices to the Rails logger
++  config.active_support.deprecation = :log
+ 
+-  # See everything in the log (default is :info)
+-  config.log_level = :warn
+-
+-  # Use a different logger for distributed setups
+-  # config.logger = SyslogLogger.new
+-
+-  # Use a different cache store in production
+-  # config.cache_store = :mem_cache_store
+-
+-  # Disable Rails's static asset server
+-  # In production, Apache or nginx will already do this
+-  config.serve_static_assets = false
+-
+-  # Enable serving of images, stylesheets, and javascripts from an asset server
+-  # config.action_controller.asset_host = "http://assets.example.com"
+-
+-  # Disable delivery errors, bad email addresses will be ignored
+-  # config.action_mailer.raise_delivery_errors = false
+-
+-  # Enable threaded mode
+-  # config.threadsafe!
+-
+-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+-  # the I18n.default_locale when a translation can not be found)
+-  # config.i18n.fallbacks = true
+-
+-  # Send deprecation notices to registered listeners
+-  config.active_support.deprecation = :notify
++  # Only use best-standards-support built into browsers
++  config.action_dispatch.best_standards_support = :builtin
+ end
 +
-+       
- <%= render 'common/form_elements/personal_data_backend', :form => f, :owner => user, :countries => countries, :radius_groups => radius_groups, :current_operator => current_operator %>
- <div class="grid_3">
-   <%= f.button :submit %>
-diff --git a/config/locales/owums.it.yml b/config/locales/owums.it.yml
-index 9b4506c..f4aaf8a 100644
---- a/config/locales/owums.it.yml
-+++ b/config/locales/owums.it.yml
-@@ -413,4 +413,4 @@ Se continui ad avere problemi, ripeti la procedura di recupero password"
-   New_cpe_template: "Nuovo template CPE"
-   operator: "Operator"
-   please_fill_required_fields: "Per favore riempi i campi richiesti:"
--  verify: "Verifica"
-+  verify: "Verifica"
-\ No newline at end of file
