@@ -1,0 +1,435 @@
+diff --git a/app/controllers/operators_controller.rb b/app/controllers/operators_controller.rb
+index 64a5eb0..259ae10 100644
+--- a/app/controllers/operators_controller.rb
++++ b/app/controllers/operators_controller.rb
+@@ -30,7 +30,9 @@ class OperatorsController < ApplicationController
+   def index
+   	if current_operator.is_admin
+     	@operators = Operator.all :order => 'login ASC'
+-    else	
++    elsif current_operator.has_role? 'operators_manager'
++    	@operators = Operator.where(:is_admin => 0).order('login ASC')
++    else		
+     	@operators = Operator.where(:id => current_operator.id).order('login ASC')
+     end	
+   end
+diff --git a/app/controllers/users_controller.rb b/app/controllers/users_controller.rb
+index 0a24b48..382fca4 100644
+--- a/app/controllers/users_controller.rb
++++ b/app/controllers/users_controller.rb
+@@ -59,6 +59,8 @@ class UsersController < ApplicationController
+   def create
+   	#verify_number = check_tax_vat_iban_number
+     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
++    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
++		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
+     @user = User.new(params[:user])
+ 		check_tax_vat_iban_number(@user)
+     # Parameter anti-tampering
+@@ -70,8 +72,7 @@ class UsersController < ApplicationController
+     @countries = Country.all
+     @mobile_prefixes = MobilePrefix.all
+     @radius_groups = RadiusGroup.all
+-    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
+-		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]		
++		
+     if @user.save and check_tax_vat_iban_number(@user)
+     	@user.pg_partita_iva = pg_partita_iva_tmp
+     	@user.save(:validate=>false)    	
+diff --git a/app/views/common/form_elements/_personal_data_backend.html.erb b/app/views/common/form_elements/_personal_data_backend.html.erb
+index d992c4a..ef0e3cd 100644
+--- a/app/views/common/form_elements/_personal_data_backend.html.erb
++++ b/app/views/common/form_elements/_personal_data_backend.html.erb
+@@ -16,6 +16,34 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #%>
++<div class="grid_8" style="margin-top: 10px;">
++  <strong><%= form.label :is_company, t("is_company") %></strong>  
++  <%= form.check_box :is_company %>
++</div>
++
++
++<% block_none = owner.is_company ? 'display:block' : 'display:none' %>
++<fieldset style="<%= block_none %>;" id="company_fields">
++  <legend id="pg_user label"><%= t("dati_azienda") %></legend>
++  <div class="grid_4">
++    <%= form.input :pg_ragione_sociale, :label => t("pg_ragione_sociale") %>
++  </div>  
++  <div class="grid_4">
++    <%= form.input :pg_partita_iva, :label => t("pg_partita_iva") %>
++  </div>
++  <div class="grid_3">
++    <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
++    <%= form.text_field :pg_indirizzo %>
++  </div>   
++  <div class="grid_3">
++    <%= form.input :pg_comune, :label => t("pg_comune") %>
++  </div>       
++  <div class="grid_2">
++    <%= form.input :pg_cap, :label => t("pg_cap") %>
++  </div>
++</fieldset>
++
++
+ <fieldset>
+   <legend id="pg_userlabel"><%= t("user_datas") %></legend>
+   <div class="grid_4">
+@@ -26,6 +54,7 @@
+   </div>  
+   
+   
++  
+   <div class="grid_4">  
+     <%= form.input :email %>
+   </div>
+@@ -64,7 +93,10 @@
+       </div>  
+   <% end %>  
+   
+-  
++  <div class="grid_4">
++    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
++    <%= form.text_field :pf_luogo_di_nascita %>
++  </div>        
+   
+   <div class="grid_4"> 
+   <%= form.input :birth_date, :as => :date,
+@@ -76,11 +108,15 @@
+   %>
+   </div>
+     
++  <div class="grid_4">  
++    <%= form.input :pf_cf, :label => t("pf_cf") %>
++  </div>    
++    
+   <div class="grid_4">
+     <strong><%= form.label :product_id, t(:product) %></strong><br />
+     <%= form.select :product_id, options_for_select([t("select_product")] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+   </div>     
+-    <div class="clearb"></div>
++  <div class="clearb"></div>  
+   <div class="grid_4">   
+     <%= form.input :address %>
+   </div>
+@@ -95,16 +131,16 @@
+     <%= form.input :state, :collection => countries, :prompt => false %>
+   </div>
+   
+-  <div class="grid_4">  
+-    <%= form.input :pf_cf, :label => t("pf_cf") %>
+-  </div>
+-  <div class="grid_4">
+-    <%= form.input :pg_partita_iva, :label => t("pg_partita_iva") %>
+-  </div>
++
++
+   <div class="grid_4">  
+     <%= form.input :iban %>
+   </div>  
+-  <div id="mydiv">
++  <div class="grid_3" style="margin-top: 21px;float: left;">  
++    <%= link_to t(:verify), "#iban", :id => "user_iban_verify", :class => "button" %>
++  </div>    
++  
++  <div id="mydiv" style="display:none;">
+     <iframe id="frame" src="" width="100%" height="300"></iframe>
+   </div>   
+ </fieldset>
+@@ -128,27 +164,6 @@
+ 
+ 
+ <fieldset>
+-  <legend id="pg_user label"><%= t("dati_azienda") %></legend>
+-  <div class="grid_4">
+-    <strong><%= form.label :pg_ragione_sociale, t("pg_ragione_sociale") %></strong>  
+-    <%= form.text_field :pg_ragione_sociale %>
+-  </div>  
+-
+-  <div class="grid_4">
+-    <strong><%= form.label :pg_cap, t("pg_cap") %></strong>  
+-    <%= form.text_field :pg_cap %>
+-  </div>  
+-  <div class="grid_4">
+-    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
+-    <%= form.text_field :pf_luogo_di_nascita %>
+-  </div>      
+-  <div class="grid_4">
+-    <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
+-    <%= form.text_field :pg_indirizzo %>
+-  </div>    
+-</fieldset>
+-
+-<fieldset>
+   <legend id="pg_user label"><%= t("dati_di_installazione") %></legend>
+   <div class="grid_4">
+     <strong><%= form.label :cpe_template_id, t(:cpe_template) %></strong><br />
+@@ -158,32 +173,35 @@
+     <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  
+     <%= form.text_field :inst_cpe_mac %>
+   </div>
+-  <div class="grid_4">
+-    <strong><%= form.label :inst_cpe_username, t("inst_cpe_username") %></strong>  
+-    <%= form.text_field :inst_cpe_username %>
+-  </div>
+-  <div class="grid_4">
+-    <strong><%= form.label :inst_cpe_password, t("inst_cpe_password") %></strong>  
+-    <%= form.text_field :inst_cpe_password %>
+-  </div>
+-  <div class="grid_3">
++
++    <%= form.hidden_field :inst_cpe_username, :value => current_operator.login %>
++    <%= form.hidden_field :inst_cpe_password, :value => current_operator.crypted_password %>
++  
++  <div class="grid_6">
+     <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
+     <%= form.text_field :inst_indirizzo %>
+   </div>  
+-  <div class="grid_3">
+-    <strong><%= form.label :pg_comune, t("pg_comune") %></strong>  
+-    <%= form.text_field :pg_comune %>
+-  </div>      
++
+   <div class="grid_2">
+     <strong><%= form.label :inst_cap, t("inst_cap") %></strong>  
+     <%= form.text_field :inst_cap %>
+   </div>        
+-
++  <div class="grid_8">
++    <%= form.input :gen_note, :label => t("note") %>
++  </div> 
+ 
+ </fieldset>  
+ <script>
+-$("#user_iban").keyup(function () { 
++$("#user_iban_verify").click(function () {
++  $("#mydiv").show(); 
+   $("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+ });  
+-$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
++//$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
++
++$('#user_is_company').click(function() {
++  $('#company_fields').toggle('slow', function() {
++    // Animation complete.
++  });
++});
++
+ </script>
+\ No newline at end of file
+diff --git a/app/views/users/_form.html.erb b/app/views/users/_form.html.erb
+index dc4bb50..4587bed 100644
+--- a/app/views/users/_form.html.erb
++++ b/app/views/users/_form.html.erb
+@@ -16,7 +16,7 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #%>
+-<div class="grid_4">
++<div class="grid_5">
+   <%= f.input :username, :disabled => !user.new_record? %>
+ </div>
+ <div class="grid_6"></div>
+@@ -34,10 +34,7 @@
+     %>
+ <% end %>
+ </div>
+-<div class="grid_4" style="margin-top: 10px;">
+-  <strong><%= f.label :is_company, t("is_company") %></strong>  
+-  <%= f.check_box :is_company %>
+-</div>
++
+ <div class="grid_8"></div>
+ 
+ 
+@@ -58,8 +55,8 @@
+ <% end %>
+ </div>
+ <% if current_operator.is_admin? %>
+-  <div class="grid_4">
+-    <strong><%= t("Operator") %></strong><br />
++  <div class="grid_5">
++    <strong><%= t("Operator") %></strong><br />
+     <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
+   </div>
+   <div class="clearb">&nbsp;</div>
+diff --git a/app/views/users/edit.html.erb b/app/views/users/edit.html.erb
+index 9fa18a1..295af6c 100644
+--- a/app/views/users/edit.html.erb
++++ b/app/views/users/edit.html.erb
+@@ -22,7 +22,7 @@
+     <%= simple_form_for @user, :html => {:multipart => true} do |f| %>
+         <fieldset>
+           <legend><%=t :Edit_user %></legend>
+-          <p><%#= f.error_messages %></p>
++          <p><%= f.error_messages %></p>
+ 
+           <%= render 'form', :f => f, :user => @user, :radius_groups => @radius_groups, :countries => @countries, :mobile_prefixes => @mobile_prefixes %>
+         </fieldset>
+diff --git a/app/views/users/new.html.erb b/app/views/users/new.html.erb
+index 86751ba..a1f7c93 100644
+--- a/app/views/users/new.html.erb
++++ b/app/views/users/new.html.erb
+@@ -22,7 +22,7 @@
+     <%= simple_form_for @user, :html => {:multipart => true} do |f| %>
+         <fieldset>
+           <legend><%=t :Create_user %></legend>
+-          <p><%#= f.error_messages %></p>
++          <p><%= f.error_messages %></p>
+ 
+           <%= render 'form', :f => f, :user => @user, :radius_groups => @radius_groups, :countries => @countries, :mobile_prefixes => @mobile_prefixes %>
+         </fieldset>
+diff --git a/config/environments/production.rb b/config/environments/production.rb
+index 830ffc0..1ead959 100644
+--- a/config/environments/production.rb
++++ b/config/environments/production.rb
+@@ -1,26 +1,49 @@
+ Owums::Application.configure do
+   # Settings specified here will take precedence over those in config/application.rb
+ 
+-  # In the development environment your application's code is reloaded on
+-  # every request.  This slows down response time but is perfect for development
+-  # since you don't have to restart the webserver when you make code changes.
+-  config.cache_classes = false
++  # The production environment is meant for finished, "live" apps.
++  # Code is not reloaded between requests
++  config.cache_classes = true
+ 
+-  # Log error messages when you accidentally call methods on nil.
+-  config.whiny_nils = true
++  # Full error reports are disabled and caching is turned on
++  config.consider_all_requests_local       = false
++  config.action_controller.perform_caching = true
+ 
+-  # Show full error reports and disable caching
+-  config.consider_all_requests_local       = true
+-  config.action_view.debug_rjs             = true
+-  config.action_controller.perform_caching = false
++  # Specifies the header that your server uses for sending files
++  config.action_dispatch.x_sendfile_header = "X-Sendfile"
+ 
+-  # Don't care if the mailer can't send
+-  config.action_mailer.raise_delivery_errors = false
++  # For nginx:
++  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+ 
+-  # Print deprecation notices to the Rails logger
+-  config.active_support.deprecation = :log
++  # If you have no front-end server that supports something like X-Sendfile,
++  # just comment this out and Rails will serve the files
+ 
+-  # Only use best-standards-support built into browsers
+-  config.action_dispatch.best_standards_support = :builtin
+-end
++  # See everything in the log (default is :info)
++  config.log_level = :warn
++
++  # Use a different logger for distributed setups
++  # config.logger = SyslogLogger.new
++
++  # Use a different cache store in production
++  # config.cache_store = :mem_cache_store
++
++  # Disable Rails's static asset server
++  # In production, Apache or nginx will already do this
++  config.serve_static_assets = false
++
++  # Enable serving of images, stylesheets, and javascripts from an asset server
++  # config.action_controller.asset_host = "http://assets.example.com"
+ 
++  # Disable delivery errors, bad email addresses will be ignored
++  # config.action_mailer.raise_delivery_errors = false
++
++  # Enable threaded mode
++  # config.threadsafe!
++
++  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
++  # the I18n.default_locale when a translation can not be found)
++  # config.i18n.fallbacks = true
++
++  # Send deprecation notices to registered listeners
++  config.active_support.deprecation = :notify
++end
+diff --git a/config/locales/owums.en.yml b/config/locales/owums.en.yml
+index b4b67df..78343a7 100644
+--- a/config/locales/owums.en.yml
++++ b/config/locales/owums.en.yml
+@@ -367,7 +367,7 @@ If you still have problems resetting the password, try repeating the procedure"
+   successfully_destroyed: "successfully destroyed"
+   successfully_created: "successfully created"
+   successfully_updated: "successfully updated"
+-  cpe_templates: "CPE Tempaltes"
++  cpe_templates: "CPE Templates"
+   cpe_template: "Modello CPE"
+   products: "Products"
+   product: "Product"
+@@ -384,7 +384,7 @@ If you still have problems resetting the password, try repeating the procedure"
+   iban_number_is_invalid: "number is invalid"
+   pf_cf: "Codice Fiscale"
+   pg_ragione_sociale: "Ragione sociale"
+-  pg_partita_iva: "Partita IVA"
++  pg_partita_iva: "Partita iva"
+   pg_cap: "c.a.p."
+   pf_luogo_di_nascita: "Luogo di nascita"
+   pg_indirizzo: "Indirizzo"
+@@ -404,6 +404,4 @@ If you still have problems resetting the password, try repeating the procedure"
+   code: "Code"  
+   select_operator: "Select Operator"
+   is_admin: "Is Admin ?"
+-  dati_di_installazione: "Installation data"
+-  dati_azienda: "Company data"
+-  dati_di_accesso: "Login details"
++  dati_di_installazione: "Installation data"
++  dati_azienda: "Company data"
++  dati_di_accesso: "Login details"
++  verify: "Verify"
+diff --git a/config/locales/owums.it.yml b/config/locales/owums.it.yml
+index cd62ed3..333e073 100644
+--- a/config/locales/owums.it.yml
++++ b/config/locales/owums.it.yml
+@@ -347,7 +347,7 @@ Se continui ad avere problemi, ripeti la procedura di recupero password"
+   will_be_your_username: "sarà il tuo nome utente"
+   zip: "CAP"
+   image_file_data: "Document Photo"
+-  user_datas: "Dati utente"
++  user_datas: "Dati Utente"
+   tax_code: "Codice Fiscale"
+   vat_number: "Partita IVA"
+   iban: "Iban"
+@@ -376,14 +376,14 @@ Se continui ad avere problemi, ripeti la procedura di recupero password"
+   created_at: "Data"
+   content: "Contenuto"
+   search: "Cerca"
+-  select_cpe_template: "Seleziona template CPE"
++  select_cpe_template: "Selezione template CPE"
+   select_product: "Seleziona prodotto"
+-  browse_cpe_templates: "Sfoglia templates CPE"
++  browse_cpe_templates: "Sfoglia template CPE"
+   browse_products: "Sfoglia prodotti"
+   iban_number_is_invalid: "Iban non valido"    
+   pf_cf: "Codice Fiscale"
+   pg_ragione_sociale: "Ragione sociale"
+-  pg_partita_iva: "Partita IVA"
++  pg_partita_iva: "Partita iva"
+   pg_cap: "CAP"
+   pf_luogo_di_nascita: "Luogo di nascita"
+   pg_indirizzo: "Indirizzo"
+@@ -403,10 +403,4 @@ Se continui ad avere problemi, ripeti la procedura di recupero password"
+   code: "Codice"
+   select_operator: "Seleziona Operatore"
+   is_admin: "è amministratore?"
+-  dati_di_installazione: "Dati di installazione"
+-  dati_azienda: "Dati azienda"
+-  dati_di_accesso: "Dati di accesso"
+-  add_products: "Aggiungi prodotti"
+-  New_product: "Nuovo prodotto"
+-  add_cpe_templates: "Aggiungi nuovo template CPE"
+-  New_cpe_template: "Nuovo template CPE"
++  dati_di_installazione: "Dati di installazione"
++  dati_azienda: "Dati azienda"
++  dati_di_accesso: "Dati di accesso"
++  add_products: "Aggiungi prodotti"
++  New_product: "Nuovo prodotto"
++  add_cpe_templates: "Aggiungi nuovo template CPE"
++  New_cpe_template: "Nuovo template CPE"
++  verify: "Verify"
