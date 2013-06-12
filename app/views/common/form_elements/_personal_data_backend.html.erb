@@ -178,7 +178,7 @@
     <%= form.text_field :inst_cpe_mac %>
   </div>
 
-    <%= form.hidden_field :inst_cpe_username, :value => @user.username %>
+    <%= form.hidden_field :inst_cpe_username, :value => (@user.given_name.to_s + @user.surname.to_s) %>
     <%= form.hidden_field :inst_cpe_password, :value => @user.crypted_password %>
   
   <div class="grid_4">

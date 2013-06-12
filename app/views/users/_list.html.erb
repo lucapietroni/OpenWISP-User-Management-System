@@ -70,7 +70,7 @@
         <%= image_tag("arrow_up.gif", :class =>"arrow_up", :size => "14x14") %>
         <%= image_tag("arrow_down.gif", :class =>"arrow_down", :size => "14x14") %>
       </th>
-      <% if current_operator.has_role? 'users_manager' %>
+      <% if current_operator.has_role? 'users_registrant' %>
           <th scope="col" colspan="4"><%=t :Operations %></th>
       <% end %>
     </tr>
@@ -103,10 +103,10 @@
               <td><%= link_to t(:Destroy), user, :confirm => t(:Are_you_sure), :method => :delete %></td>
           <% end %>
           <% if user.cpe_template_id %>
-            <% if current_operator.has_role? 'users_manager' %>
+            <% if current_operator.has_role? 'users_registrant' %>
               <td><%= link_to t("config"), createdownload_path(user.id) %></td>
             <% end %>
-            <% if current_operator.has_role? 'users_manager' %>
+            <% if current_operator.has_role? 'users_registrant' %>
               <td><%= link_to t("contratto"), createPDF_path(user.id) %></td>
             <% end %>
           <% end %>            
