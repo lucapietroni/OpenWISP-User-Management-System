@@ -178,8 +178,8 @@
     <%= form.text_field :inst_cpe_mac %>
   </div>
 
-    <%= form.hidden_field :inst_cpe_username, :value => current_operator.login %>
-    <%= form.hidden_field :inst_cpe_password, :value => current_operator.crypted_password %>
+    <%= form.hidden_field :inst_cpe_username, :value => @user.username %>
+    <%= form.hidden_field :inst_cpe_password, :value => @user.crypted_password %>
   
   <div class="grid_4">
     <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
