@@ -22,6 +22,7 @@
 </div>
 
 
+
 <% block_none = owner.is_company ? 'display:block' : 'display:none' %>
 <fieldset style="<%= block_none %>;" id="company_fields">
   <legend id="pg_user label"><%= t("dati_azienda") %></legend>
@@ -31,17 +32,18 @@
   <div class="grid_4">
     <%= form.input :pg_partita_iva, :label => t("pg_partita_iva") %>
   </div>
-  <div class="grid_3">
+  <div class="grid_4">
     <strong><%= form.label :pg_indirizzo, t("pg_indirizzo") %></strong>  
     <%= form.text_field :pg_indirizzo %>
   </div>   
-  <div class="grid_3">
+  <div class="grid_2">
     <%= form.input :pg_comune, :label => t("pg_comune") %>
   </div>       
   <div class="grid_2">
     <%= form.input :pg_cap, :label => t("pg_cap") %>
   </div>
 </fieldset>
+<div class="clearb">&nbsp;</div>
 
 
 <fieldset>
@@ -144,24 +146,27 @@
     <iframe id="frame" src="" width="100%" height="300"></iframe>
   </div>   
 </fieldset>
-
+<div class="clearb">&nbsp;</div>
 <fieldset>
   <legend id="pg_user label"><%= t("dati_di_accesso") %></legend>
-
-  <div id="eula_priv">
-    <%= link_to t(:Click_for_eula), document_path('eula.pdf'), :target => '_blank' %>
-    <%= form.input :eula_acceptance, :error => false %>
-  
-    <%= link_to t(:Click_for_privacy), document_path('privacy.pdf'), :target => '_blank' %>
-    <%= form.input :privacy_acceptance, :error => false %>
-  </div>
-
+<div class="grid_4">
   <% if current_operator.has_role? 'users_manager' %>
       <%= form.label :radius_groups %>
       <%= render 'radius_group_select', :user => owner, :radius_groups => radius_groups %>
   <% end %>
-</fieldset>
+</div>  
+<div class="grid_4" style="margin-top:-15px;float: left;">
+  <div id="eula_priv">
+    <%= link_to t(:Click_for_eula), document_path('eula.pdf'), :target => '_blank', :id => "acceptance" %>
+    <%= form.input :eula_acceptance, :error => true %>
+  
+    <%= link_to t(:Click_for_privacy), document_path('privacy.pdf'), :target => '_blank', :id => "privacy" %>
+    <%= form.input :privacy_acceptance, :error => true %>
+  </div>
+</div>
 
+</fieldset>
+<div class="clearb">&nbsp;</div>
 
 <fieldset>
   <legend id="pg_user label"><%= t("dati_di_installazione") %></legend>
@@ -177,16 +182,16 @@
     <%= form.hidden_field :inst_cpe_username, :value => current_operator.login %>
     <%= form.hidden_field :inst_cpe_password, :value => current_operator.crypted_password %>
   
-  <div class="grid_6">
+  <div class="grid_4">
     <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
     <%= form.text_field :inst_indirizzo %>
   </div>  
 
-  <div class="grid_2">
+  <div class="grid_4">
     <strong><%= form.label :inst_cap, t("inst_cap") %></strong>  
     <%= form.text_field :inst_cap %>
   </div>        
-  <div class="grid_8">
+  <div class="grid_9">
     <%= form.input :gen_note, :label => t("note") %>
   </div> 
 
@@ -204,4 +209,15 @@ $('#user_is_company').click(function() {
   });
 });
 
+$('#user_eula_acceptance').click(function() {
+  var url = $("#acceptance").attr('href');
+  window.open(url, '_blank');
+});
+
+$('#user_privacy_acceptance').click(function() {
+  var url = $("#privacy").attr('href');
+  window.open(url, '_blank');
+});
+
 </script>
+

@@ -20,31 +20,27 @@
 <% if owner.is_a? Account %>
     <% if owner.verify_with_document? %>
         <strong><%=t :Document_photo %></strong><br/>
-
         <p class="center"><%= document_of owner %></p>
     <% end %>
 <% elsif owner.is_a? User %>
     <% if owner.can_signup_via?(AccountCommon::VERIFY_BY_DOCUMENT) %>
         <% if owner.new_record? %>
             <%# We have a new User %>
-            <div class="verification-block" style="display:none;">
+            <div class="verification-block" style="display:block;">
               <% if owner.has_image? %>
                   <strong><%=t :Document_photo_preview %></strong><br/>
-
                   <p class="center"><%= document_of owner, :inline => true %></p>
               <% end %>
               <div class="grid_4"> 
-                <%= form.input :image_file %>
+                <%= form.input :image_file, :label => t("document_photo") %>
               </div>  
               <%= form.input :image_file_temp, :as => :hidden %>
             </div>
         <% else %>
             <% if owner.verify_with_document? %>
-                
-
                 <%# We have an already existing User %>
                 <div class="grid_4"> 
-                  <%= form.input :image_file %>
+                  <%= form.input :image_file, :label => t("document_photo") %>
                 </div>  
                 <div class="grid_8">
                   <%= document_of owner, :inline => true %>

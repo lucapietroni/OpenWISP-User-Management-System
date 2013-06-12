@@ -1,13 +1,30 @@
+<%#
+# This file is part of the OpenWISP User Management System
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <link rel="shortcut icon" href="<%= image_path 'caspur.ico' %>" />
-
-  <title><%=t :Users_management %></title>
-
+  <title><%= t :Users_management %></title>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
   <%= stylesheet_link_tag 'fluid960/reset' %>
   <%= stylesheet_link_tag 'fluid960/text' %>
   <%= stylesheet_link_tag 'fluid960/960' %>
@@ -16,26 +33,30 @@
 
   <%= stylesheet_link_tag 'custom' %>
 
-  <%= yield :after_css_defaults %>
+  <%= content_for :after_css_defaults %>
 
-  <% for_ie :version => '6' do %>
+  <%= for_ie :version => '6' do %>
       <%= stylesheet_link_tag 'fluid960/ie6' %>
   <% end %>
 
-  <% for_ie :version => '7' do %>
+  <%= for_ie :version => '7' do %>
       <%= stylesheet_link_tag 'fluid960/ie' %>
   <% end %>
 
-  <% for_ie do %>
+  <%= for_ie do %>
       <%= stylesheet_link_tag 'custom-ie' %>
   <% end %>
 
   <%= javascript_include_tag :defaults %>
 
-  <%= yield :after_defaults %>
+  <%= content_for :after_defaults %>
 
   <%= javascript_include_tag 'fluid16' %>
-  <%= javascript_include_tag 'owums.xusers' %>
+  
+  <%= javascript_include_tag 'common' %>
+
+  <link rel="shortcut icon" href="<%= image_path 'openwisp.ico' %>"/>
+  <%= csrf_meta_tag %>
 </head>
 <body>
 
@@ -46,7 +67,7 @@
       <tr>
         <td style="text-align:left">
           <h1 id="branding">
-            <%= link_to image_tag("logo_caspur.png", :border => 0, :size => "64x50", :alt => 'Open WISP User Management System', :class => "wums_logo"), :root %> Open WISP User Management System
+            Meshcom User Management System
           </h1>
         </td>
         <td style="text-align:right">
@@ -61,68 +82,97 @@
       <% if current_operator %>
           <% if current_operator.has_role? 'stats_viewer' %>
               <li>
-                <%= menu_link_to t(:Show_stats), stats_path %>
+                <%= menu_link_to t(:Show_stats), stats_url %>
                 <ul>
-                  <li><%= menu_link_to t(:Registered_users), stat_path('registered_users') %></li>
-                  <li><%= menu_link_to t(:Logins), stat_path('logins') %></li>
-                  <li><%= menu_link_to t(:Traffic), stat_path('traffic') %></li>
+                  <li><%= menu_link_to t(:Registered_users_daily), stat_url('registered_users_daily') %></li>
+                  <li><%= menu_link_to t(:Registered_users), stat_url('registered_users') %></li>
+                  <li><%= menu_link_to t(:Logins), stat_url('logins') %></li>
+                  <li><%= menu_link_to t(:Traffic), stat_url('traffic') %></li>
                 </ul>
               </li>
           <% end %>
-          <% if current_operator.has_role? 'users_browser' %>
-              <li><%= menu_link_to t(:Browse_users), users_browse_path %></li>
+          <% if current_operator.has_role? 'users_browser' or
+                  current_operator.has_role? 'users_finder' or
+                  current_operator.has_role? 'users_manager' or current_operator.has_role? 'users_registrant'
+          %>
+              <li>
+                <%= menu_link_to t(:Users), '#' %>
+                <ul>
+                  <% if current_operator.has_role? 'users_browser' %>
+                      <li><%= menu_link_to t(:Browse_users), users_browse_url %></li>
+                  <% end %>
+                  <% if current_operator.has_role? 'users_finder' %>
+                      <li><%= menu_link_to t(:Search_users), users_search_url %></li>
+                  <% end %>
+                  <% if current_operator.has_role? 'users_manager' or current_operator.has_role? 'users_registrant' %>
+                      <li><%= menu_link_to t(:Add_new_user), new_user_url %></li>
+                  <% end %>
+                </ul>
+              </li>
           <% end %>
-          <% if current_operator.has_role? 'users_finder' %>
-              <li><%= menu_link_to t(:Search_users), users_search_path %></li>
-          <% end %>
-          <% if current_operator.has_role? 'users_manager' or current_operator.has_role? 'users_registrant' %>
-              <li><%= menu_link_to t(:Add_new_user), new_user_path %></li>
-          <% end %>
-          <% if current_operator.has_role? 'configurations_manager' %>
-              <li><%= menu_link_to t(:Configuration_keys), configurations_path %></li>
+          <% if current_operator.has_role? 'radius_groups_viewer' or
+                  current_operator.has_role? 'radius_groups_creator' %>
+              <li>
+                <%= menu_link_to t(:Radius_groups), '#' %>
+                <ul>
+                  <% if current_operator.has_role? 'radius_groups_viewer' %>
+                      <li><%= menu_link_to t(:Browse_radius_groups), radius_groups_url %></li>
+                  <% end %>
+                  <% if current_operator.has_role? 'radius_groups_creator' %>
+                      <li><%= menu_link_to t(:Add_new_radius_group), new_radius_group_url %></li>
+                  <% end %>
+                </ul>
+              </li>
           <% end %>
           <% if current_operator.has_role? 'operators_manager' %>
-              <li><%= menu_link_to t(:Operators), operators_path %></li>
+              <li>
+                <%= menu_link_to t(:Operators), '#' %>
+                <ul>
+                  <li><%= menu_link_to t(:Browse_operators), operators_url %></li>
+                  <% if current_operator.is_admin %>
+                    <li><%= menu_link_to t(:Add_new_operator), new_operator_url %></li>
+                  <% end %>
+                </ul>
+              </li>
           <% end %>
-          
-
           <% if current_operator.has_role? 'configurations_manager' %>
           <li>
             <%= menu_link_to t(:System_settings), '#' %>
             <ul>
                <li><%= menu_link_to t(:Configuration_keys), configurations_url %></li>
+              <% end %>
             </ul>
           </li>
-          <% end %>
           <% if current_operator.has_role? 'configurations_manager' %>
           <li>
             <%= menu_link_to t(:products), '#' %>
             <ul>
                <li><%= menu_link_to t(:browse_products), products_url %></li>
                <li><%= menu_link_to t(:add_products), new_product_url %></li>
+              <% end %>
             </ul>
-          </li>         
-          
+          </li>
+          <% if current_operator.has_role? 'configurations_manager' %>
           <li>
             <%= menu_link_to t(:cpe_templates), '#' %>
             <ul>
                <li><%= menu_link_to t(:browse_cpe_templates), cpe_templates_url %></li>
                <li><%= menu_link_to t(:add_cpe_templates), new_cpe_template_url %></li>
+              <% end %>
             </ul>
           </li>
-          <% end %>
           <li class="secondary"><%= menu_link_to t(:Logout), operator_logout_url, :method => :delete %></li>
           <li class="secondary"><%= menu_link_to t(:Home), operator_url(current_operator) %></li>
       <% else %>
           <li><%= menu_link_to t(:How_to_use_service), account_instructions_url, :disable_if => on_root? %></li>
-          <% if !current_account %>
+          <% if current_account %>
+              <li><%= menu_link_to t(:Show_account_info), account_url %></li>
+              <li><%= menu_link_to t(:Edit_account), edit_account_url %></li>
+              <li class="secondary"><%= link_to t(:Logout), account_logout_url, :method => :delete %></li>
+          <% else %>
               <li><%= menu_link_to t(:Manage_your_account), account_login_url %></li>
               <li><%= menu_link_to t(:Register), account_registration_url %></li>
               <li><%= menu_link_to t(:Forgot_password), password_reset_url %></li>
-          <% else %>
-              <li><%= menu_link_to t(:Show_account_info), account_path %></li>
-              <li><%= menu_link_to t(:Edit_account), edit_account_path %></li>
-              <li class="secondary"><%= link_to t(:Logout), account_logout_url %></li>
           <% end %>
       <% end %>
     </ul>
@@ -130,20 +180,21 @@
   <div class="clear"></div>
   <div class="grid_12">
     <div id="notice" class="box">
-      <% if flash[:notice]%>
+      <% if flash[:notice] %>
           <p><%= flash[:notice] %>&nbsp;</p>
       <% end %>
     </div>
   </div>
   <div class="clear"></div>
+  <div class="alert-success" id="flash_destroy_notice"></div>
 
-  <%= yield  %>
+  <%= yield %>
 
   <div class="grid_12" id="site_info">
     <div class="box" style="text-align:center">
-      <p>Open WISP User Management System - <%=t :Created_by %> <a href="https://spider.caspur.it/">CASPUR</a></p>
+      <p>OpenWISP User Management System - Copyright (C) 2012 <a href="http://openwisp.org/">OpenWISP.org</a></p>
 
-      <% if has_mobile? && is_mobile_device? %>
+      <% if is_mobile_device? %>
           <p><%= link_to_toggle_mobile %></p>
       <% end %>
     </div>
