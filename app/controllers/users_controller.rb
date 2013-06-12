@@ -287,9 +287,7 @@ class UsersController < ApplicationController
 		end
 		send_file directory_file.path, :type => 'text/plain; charset=utf-8',
 	                             :disposition => 'attachment',
-	                             :type => "application/force-download",
-	                             :filename => file_name,
-	                             :x_sendfile=>true
+	                             :filename => file_name
 	end
 
   def createPDF
