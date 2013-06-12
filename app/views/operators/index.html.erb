@@ -26,6 +26,7 @@
       <thead>
         <tr>
           <th><%=t :Login %></th>
+          <th><%=t :code %></th>
           <th><%=t :Logged_in %></th>
           <th><%=t :Current_login_at %></th>
           <th><%=t :Current_login_ip %></th>
@@ -40,6 +41,7 @@
         <% @operators.each do |operator| %>
           <tr class="hover">
             <td><%= link_to operator.login, operator %></td>
+            <td><%= operator.code %></td>
             <td><%= operator.logged_in? %></td>
             <td><%=l operator.current_login_at rescue t(:blank) %></td>
             <td><%= operator.current_login_ip || t(:blank) %></td>
