@@ -282,11 +282,9 @@ class UsersController < ApplicationController
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
 		file_name = cpe.name.to_s + ".txt"
 		directory_file = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
-		
 		File.open(directory_file, 'wb') do|f|
 			f.write(template)
 		end
-		
 		send_file directory_file.path, :type => 'text/plain; charset=utf-8',
 	                             :disposition => 'attachment',
 	                             :type => "application/force-download",
