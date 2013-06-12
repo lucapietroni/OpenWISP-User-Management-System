@@ -72,7 +72,9 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		
+		if params[:user][:is_company] == '0'
+			@user.errors.delete(:pg_partita_iva)
+		end		
     if @user.save and check_tax_vat_iban_number(@user)
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.save(:validate=>false)    	
@@ -87,11 +89,25 @@ class UsersController < ApplicationController
       end
     else
     	update_validation_errors(@user)
-    	check_tax_vat_iban_number(@user)    	
-      respond_to do |format|
-        format.html { render :action => :new }
-        format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
-      end
+    	check_tax_vat_iban_number(@user)
+    	if @user.errors.empty?
+				@user.attributes = params[:user]
+				@user.save(false)
+	      current_account_session.destroy unless current_account_session.nil?
+	
+	      # Associate user with the operator the current operator
+	      current_operator.has_role!('user_manager', @user)
+				create_user_role(@user.id)				
+	      respond_to do |format|
+	        format.html { render :ticket }
+	        format.xml { render :xml => @user, :status => :created }
+	      end
+    	else
+	      respond_to do |format|
+	        format.html { render :action => :edit }
+	        format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
+	      end    			
+    	end    	
     end
   end
 	
@@ -125,7 +141,10 @@ class UsersController < ApplicationController
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
-		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20] 
+		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]
+		if params[:user][:is_company] == '0'
+			@user.errors.delete(:pg_partita_iva)
+		end	 
     if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
     	if current_operator.is_admin
 	    	operator_user = @user.operator_users.first
@@ -146,14 +165,33 @@ class UsersController < ApplicationController
     else
     	update_validation_errors(@user)
     	check_tax_vat_iban_number(@user)
-      respond_to do |format|
-        format.html { render :action => :edit }
-        format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
-      end
+    	if @user.errors.empty?
+				@user.attributes = params[:user]
+				@user.save(false)
+	    	if current_operator.is_admin
+		    	operator_user = @user.operator_users.first
+		    	if operator_user
+		    		operator_user.operator_id = params[:operator_id]
+		    		operator_user.save
+		    	end
+		    end	
+	      current_account_session.destroy unless current_account_session.nil?
+	      flash[:notice] = I18n.t(:Account_updated)				
+	      respond_to do |format|
+	        format.html { redirect_to user_url }
+	        format.xml { render :nothing => true, :status => :ok }
+	      end    		
+    	else
+	      respond_to do |format|
+	        format.html { render :action => :edit }
+	        format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
+	      end    			
+    	end
     end
   end
 
   def update_validation_errors(user)
+  	
     if user.errors.has_key?(:pf_cf) && user.errors[:pf_cf].include?("Invalid format")
       user.errors.delete(:pf_cf)
       user.errors.add(:pf_cf, t("codice_fiscale_invalid_format"))
@@ -162,14 +200,18 @@ class UsersController < ApplicationController
       user.errors.delete(:pf_cf)
       user.errors.add(:pf_cf, t("codice_fiscale_empty"))
     end
-    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("Invalid format")
-      user.errors.delete(:pg_partita_iva)
-      user.errors.add(:pg_partita_iva, t("partita_iva_invalid_format"))
-    end
-    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("can't be blank")
-      user.errors.delete(:pg_partita_iva)
-      user.errors.add(:pg_partita_iva, t("partita_iva_empty"))
-    end 
+    if params[:user][:is_company] == '1'
+	    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("Invalid format")
+	      user.errors.delete(:pg_partita_iva)
+	      user.errors.add(:pg_partita_iva, t("partita_iva_invalid_format"))
+	    end
+	    if user.errors.has_key?(:pg_partita_iva) && user.errors[:pg_partita_iva].include?("can't be blank")
+	      user.errors.delete(:pg_partita_iva)
+	      user.errors.add(:pg_partita_iva, t("partita_iva_empty"))
+	    end
+	  else
+	  	user.errors.delete(:pg_partita_iva)
+	 	end  
   end
 
 
