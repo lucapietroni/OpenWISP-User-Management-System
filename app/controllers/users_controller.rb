@@ -281,13 +281,17 @@ class UsersController < ApplicationController
 		template=template.gsub("<CPE_NAME>",user.inst_cpe_username)
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
 		file_name = cpe.name.to_s + ".txt"
-		t = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
-		t.write(template)
-		t.close
+		directory_file = Tempfile.new("tmp-cpe_configuration_file-#{Time.now}")
 		
-		send_file t.path, :type => 'text/plain; charset=utf-8',
+		File.open(directory_file, 'wb') do|f|
+			f.write(template)
+		end
+		
+		send_file directory_file.path, :type => 'text/plain; charset=utf-8',
 	                             :disposition => 'attachment',
-	                             :filename => file_name
+	                             :type => "application/force-download",
+	                             :filename => file_name,
+	                             :x_sendfile=>true
 	end
 
   def createPDF
