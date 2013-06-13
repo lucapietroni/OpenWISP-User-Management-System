@@ -40,6 +40,8 @@ class User < AccountCommon
   validates :pg_partita_iva, :partita_iva_format => true
   
   validates :iban, :presence => {:message => "can't be blank"}
+  validates :product_id, :presence => true
+  validates :cpe_template_id, :presence => true
 
   has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy
