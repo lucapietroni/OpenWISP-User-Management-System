@@ -21,7 +21,7 @@
   <% if user.new_record? %>
     <%= f.input :username , :as => :hidden %>
   <% else %>
-    <%= f.input :username , :disabled => true %>
+    <%= f.input :username , :disabled => :true %>
   <% end %>
   </div>
   <div class="grid_6"></div>
