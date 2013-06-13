@@ -80,7 +80,7 @@ class UsersController < ApplicationController
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
-        @user.username = @user.given_name.to_s + @user.surname.to_s
+        @user.username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
@@ -99,7 +99,7 @@ class UsersController < ApplicationController
 #				@user.save(false)
     		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
-                @user.username = @user.given_name.to_s + @user.surname.to_s
+                @user.username = @user.given_name.to_s + "." + @user.surname.to_s
     		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?
 	
