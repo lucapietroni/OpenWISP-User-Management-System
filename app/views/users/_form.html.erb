@@ -22,7 +22,24 @@
   </div>
   <div class="grid_6"></div>
   
+<div class="grid_4">  
+<% if user.new_record? %>
+    <% if user_verification_methods.length == 1 %>
+        <%= f.input :verification_method, :as => :hidden %>
+    <% else %>
+        <%= f.input :verification_method, :collection => user_verification_select, :prompt => false %>
+    <% end %>
+<% else %>
+    <%= f.input :verification_method,
+                :collection => account_verification_select + user_verification_select,
+                :disabled => true
+    %>
+<% end %>
+<div class="clearb"></div>  
+  </div>
   <%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
+<div class="clearb"></div>
+  <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
   <div class="clearb"></div>
   <% if current_operator.is_admin? %>
     <div class="grid_4">
@@ -30,8 +47,6 @@
       <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
     </div>
   <% end %>
-  <div class="clearb"></div>
-  <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
   <div class="clearb"></div>
 
 <% if user.new_record? %>

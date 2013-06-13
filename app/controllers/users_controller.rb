@@ -78,6 +78,8 @@ class UsersController < ApplicationController
 		end		
     if @user.save and check_tax_vat_iban_number(@user)
     	@user.pg_partita_iva = pg_partita_iva_tmp
+    	@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
+    	@user.inst_cpe_password = @user.crypted_password.to_s
     	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
@@ -94,6 +96,9 @@ class UsersController < ApplicationController
     	if @user.errors.empty?
 				@user.attributes = params[:user]
 				@user.save(false)
+    		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
+    		@user.inst_cpe_password = @user.crypted_password.to_s
+    		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?
 	
 	      # Associate user with the operator the current operator
@@ -155,6 +160,7 @@ class UsersController < ApplicationController
 	    	end
 	    end	
     	@user.pg_partita_iva = pg_partita_iva_tmp
+    	@user.inst_cpe_password = @user.crypted_password
     	@user.save(:validate=>false)
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
@@ -168,7 +174,9 @@ class UsersController < ApplicationController
     	check_tax_vat_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-				@user.save(false)
+				@user.save(:validate=>false)
+				@user.inst_cpe_password = @user.crypted_password
+				@user.save(:validate=>false)
 	    	if current_operator.is_admin
 		    	operator_user = @user.operator_users.first
 		    	if operator_user
