@@ -53,7 +53,7 @@ class AccountCommon < ActiveRecord::Base
 
   # Validations
   validates :username,
-            :presence => true,
+#            :presence => true,
             :uniqueness => {:allow_blank => true},
             :length => {:in => 4..64, :allow_blank => true},
             :format => {:with => /\A[a-z0-9_\-\.@]+\Z/i, :allow_blank => true}

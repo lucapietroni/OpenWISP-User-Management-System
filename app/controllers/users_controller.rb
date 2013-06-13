@@ -96,7 +96,7 @@ class UsersController < ApplicationController
     	check_tax_vat_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-				@user.save(false)
+#				@user.save(false)
     		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
                 @user.username = @user.given_name.to_s + @user.surname.to_s
@@ -176,7 +176,6 @@ class UsersController < ApplicationController
     	check_tax_vat_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-				@user.save(:validate=>false)
 				@user.inst_cpe_password = @user.crypted_password
 				@user.save(:validate=>false)
 	    	if current_operator.is_admin

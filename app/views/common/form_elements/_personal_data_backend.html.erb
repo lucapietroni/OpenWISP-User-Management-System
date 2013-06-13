@@ -86,9 +86,11 @@
   </div>    
     
   <div class="grid_4">
-    <strong><%= form.label :product_id, t(:product) %></strong><br />
-    <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
-  </div>     
+    <%= form.input :product_id, :label => t("product") do %>
+      <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+    <% end %>  
+  </div>    
+    
   <div class="clearb"></div>  
   <div class="grid_4">   
     <%= form.input :address %>
