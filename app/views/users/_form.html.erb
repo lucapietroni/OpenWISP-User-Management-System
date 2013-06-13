@@ -18,7 +18,7 @@
 #%>
 <fieldset>
   <div class="grid_4">
-    <%= f.input :username, :disabled => !user.new_record? %>
+    <%= f.input :username , :disabled => user.new_record? %>
   </div>
   <div class="grid_6"></div>
   
@@ -43,7 +43,7 @@
   <div class="clearb"></div>
   <% if current_operator.is_admin? %>
     <div class="grid_4">
-      <strong><%= t("operator") %></strong><br />
+      <strong><%= t("Operator") %></strong><br />
       <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
     </div>
   <% end %>

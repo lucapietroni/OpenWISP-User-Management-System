@@ -32,7 +32,7 @@
                   <p class="center"><%= document_of owner, :inline => true %></p>
               <% end %>
               <div class="grid_4"> 
-                <%= form.input :image_file, :label => t("document_photo") %>
+                <%= form.input :image_file, :label => t("Document_photo") %>
               </div>  
               <%= form.input :image_file_temp, :as => :hidden %>
             </div>
@@ -40,7 +40,7 @@
             <% if owner.verify_with_document? %>
                 <%# We have an already existing User %>
                 <div class="grid_4"> 
-                  <%= form.input :image_file, :label => t("document_photo") %>
+                  <%= form.input :image_file, :label => t("Document_photo") %>
                 </div>  
                 <div class="grid_8">
                   <%= document_of owner, :inline => true %>
