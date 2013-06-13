@@ -5,4 +5,4 @@ tmp
 db/schema.rb
 *.orig
 *.rej
-patch*
+patch.txt
