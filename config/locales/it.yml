@@ -166,8 +166,9 @@ it:
         name_format: "può contenere solo caratteri alfabetici ed i caratteri ''', '.' e ','"
         address_format: "può contenere solo numeri, lettere  ed i caratteri ''', '.' e ','"
         zip_format: "non è corretto"
-        eula_must_be_accepted: "devono essere accettati"
+        eula_must_be_accepted: "devono essere accettate"
         privacy_must_be_accepted: "deve essere accettata"
+        mac_format: "esempio 00:80:C8:E9:8B:01"
 
     # Translate model names. Used in Model.human_name().
     models:

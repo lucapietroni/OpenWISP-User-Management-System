@@ -42,6 +42,7 @@ class User < AccountCommon
   validates :iban, :presence => {:message => "can't be blank"}
   validates :product_id, :presence => true
   validates :cpe_template_id, :presence => true
+  validates :inst_cpe_mac, :presence => true
 
   has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy

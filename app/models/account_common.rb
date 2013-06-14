@@ -113,6 +113,10 @@ class AccountCommon < ActiveRecord::Base
             :presence => true,
             :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
 
+  validates :inst_cpe_mac,
+            :presence => true,
+            :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
+
   validates_presence_of :birth_date
   validates_presence_of :eula_acceptance, :message => :eula_must_be_accepted
   validates_presence_of :privacy_acceptance, :message => :privacy_must_be_accepted
