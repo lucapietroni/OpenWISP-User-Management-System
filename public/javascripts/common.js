@@ -14,7 +14,7 @@ $(document).ready(function() {
   
   $("#user_is_company").click(function(){
     $("#company_fields").slideToggle("slow");
-    $("#pg_userlabel").html()=="Dati utente"?$("#pg_userlabel").html("Dati Legale rappresentante"):$("#pg_userlabel").html("Dati utente");
+    $("#pg_userlabel").html()=="Dati utente"?$("#pg_userlabel").html("Dati legale rappresentante"):$("#pg_userlabel").html("Dati utente");
   });
   
   $("#user_iban_verify").click(function () {
