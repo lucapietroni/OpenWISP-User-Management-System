@@ -47,7 +47,7 @@
 <div class="clearb">&nbsp;</div>
 
 <fieldset>
-  <legend id="pg_userlabel"><%= t("user_datas") %></legend>
+  <legend id="pg_userlabel"><%= owner.is_company ? t("user_data_represent") : t("user_datas") %></legend>
   <div class="grid_4">
     <%= form.input :given_name, :disabled => !owner.new_record? %>
   </div>  
@@ -198,28 +198,3 @@
   </div> 
 
 </fieldset>  
-<script>
-$("#user_iban_verify").click(function () {
-  $("#mydiv").show(); 
-  $("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
-});  
-//$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
-
-$('#user_is_company').click(function() {
-  $('#company_fields').toggle('slow', function() {
-    // Animation complete.
-  });
-});
-
-$('#user_eula_acceptance').click(function() {
-  var url = $("#acceptance").attr('href');
-  window.open(url, '_blank');
-});
-
-$('#user_privacy_acceptance').click(function() {
-  var url = $("#privacy").attr('href');
-  window.open(url, '_blank');
-});
-
-</script>
-

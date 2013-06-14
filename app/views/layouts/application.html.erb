@@ -136,31 +136,33 @@
               </li>
           <% end %>
           <% if current_operator.has_role? 'configurations_manager' %>
-          <li>
-            <%= menu_link_to t(:System_settings), '#' %>
-            <ul>
-               <li><%= menu_link_to t(:Configuration_keys), configurations_url %></li>
-              <% end %>
-            </ul>
-          </li>
+            <li>
+              <%= menu_link_to t(:System_settings), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:Configuration_keys), configurations_url %></li>
+              </ul>
+            </li>               
+          <% end %>
           <% if current_operator.has_role? 'configurations_manager' %>
-          <li>
-            <%= menu_link_to t(:products), '#' %>
-            <ul>
-               <li><%= menu_link_to t(:browse_products), products_url %></li>
-               <li><%= menu_link_to t(:add_products), new_product_url %></li>
-              <% end %>
-            </ul>
-          </li>
+            <li>
+              <%= menu_link_to t(:products), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:browse_products), products_url %></li>
+                 <li><%= menu_link_to t(:add_products), new_product_url %></li>
+              </ul>
+            </li>               
+          <% end %>
+
           <% if current_operator.has_role? 'configurations_manager' %>
-          <li>
-            <%= menu_link_to t(:cpe_templates), '#' %>
-            <ul>
-               <li><%= menu_link_to t(:browse_cpe_templates), cpe_templates_url %></li>
-               <li><%= menu_link_to t(:add_cpe_templates), new_cpe_template_url %></li>
-              <% end %>
-            </ul>
-          </li>
+            <li>
+              <%= menu_link_to t(:cpe_templates), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:browse_cpe_templates), cpe_templates_url %></li>
+                 <li><%= menu_link_to t(:add_cpe_templates), new_cpe_template_url %></li>
+              </ul>
+            </li>     
+          <% end %>
+          
           <li class="secondary"><%= menu_link_to t(:Logout), operator_logout_url, :method => :delete %></li>
           <li class="secondary"><%= menu_link_to t(:Home), operator_url(current_operator) %></li>
       <% else %>

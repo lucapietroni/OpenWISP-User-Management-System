@@ -10,33 +10,26 @@ $(document).ready(function() {
     return false;
   });  
   
-  $("a[rel^='prettyPhoto']").prettyPhoto({keyboard_shortcuts: false, animation_speed:'normal',theme:'light_square',slideshow:3000, autoplay_slideshow: false, social_tools:false, default_width: 650, default_height: 444, show_title: false, deeplinking: false});  
-  
-  $('#locale').change(function() {
-    $('#locale_id').submit();
-  });
-  
   $("input:text").eq(0).focus();
   
-  $('#flash_msg_notice').delay(2000).animate({height: '0px', opacity: 0}); 
+  $("#user_is_company").click(function(){
+    $("#company_fields").slideToggle("slow");
+    $("#pg_userlabel").html()=="Dati utente"?$("#pg_userlabel").html("Dati Legale rappresentante"):$("#pg_userlabel").html("Dati utente");
+  });
   
-  $('#flash_msg_error').delay(2000).animate({height: '0px', opacity: 0});
+  $("#user_iban_verify").click(function () {
+    $("#mydiv").show(); 
+    $("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
+  });  
+  //$("#frame").attr("src", "http://www.mutuissimo.it/cerca.asp?q=a&iban="+$("#user_iban").val());
   
+  $('#user_eula_acceptance').click(function() {
+    var url = $("#acceptance").attr('href');
+    window.open(url, '_blank');
+  });
+  
+  $('#user_privacy_acceptance').click(function() {
+    var url = $("#privacy").attr('href');
+    window.open(url, '_blank');
+  });  
 });  
-
-$(document).keyup(function(e) {
-  if (e.keyCode == 27) { $.prettyPhoto.close(); return false;}   // esc
-});
-
-function callAjaxRequest(snCityId, ssUrl, ssUpdateDivId)
-{
-	jQuery.ajax({
-		type:'GET',
-		dataType:'html',
-		data:{id: snCityId},
-		url:ssUrl,
-		success:function(result){
-		    $("#div_update_area").html(result);
-		}
-	})
-}
