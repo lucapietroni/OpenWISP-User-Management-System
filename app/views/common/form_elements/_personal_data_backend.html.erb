@@ -177,13 +177,11 @@
       <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.all.collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)), :error => true %>
     <% end %>  
   </div>  
-  
-  
   <div class="grid_4">
     <strong><%= form.label :inst_cpe_mac, t("inst_cpe_mac") %></strong>  
     <%= form.text_field :inst_cpe_mac %>
   </div>
-  
+  <div class="clearb"></div>
   <div class="grid_4">
     <strong><%= form.label :inst_indirizzo, t("inst_indirizzo") %></strong>  
     <%= form.text_field :inst_indirizzo %>
