@@ -91,7 +91,7 @@ class AccountCommon < ActiveRecord::Base
 
   validates :given_name,
             :presence => true,
-            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+            :format => {:with => /\A(\w|[\àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
 
   validates :surname,
             :presence => true,
@@ -116,6 +116,22 @@ class AccountCommon < ActiveRecord::Base
   validates :pf_luogo_di_nascita,
             :presence => true,
             :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_ragione_sociale, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+
+  validates :pg_indirizzo, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\/\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_comune, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_cap, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
 
   validates :inst_cpe_mac,
             :presence => true,

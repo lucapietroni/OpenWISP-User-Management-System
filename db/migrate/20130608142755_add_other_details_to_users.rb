@@ -2,11 +2,11 @@ class AddOtherDetailsToUsers < ActiveRecord::Migration
   def self.up
     add_column :users, :pg_ragione_sociale, :string
     add_column :users, :pg_partita_iva, :string
-    add_column :users, :pg_indirizzo, :text
+    add_column :users, :pg_indirizzo, :string
     add_column :users, :pg_cap, :string
     add_column :users, :pf_cf, :string
     add_column :users, :pf_luogo_di_nascita, :string
-    add_column :users, :inst_indirizzo, :text
+    add_column :users, :inst_indirizzo, :string
     add_column :users, :inst_cap, :string
     add_column :users, :inst_cpe_modello, :string
     add_column :users, :inst_cpe_username, :string
