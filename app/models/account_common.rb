@@ -113,6 +113,10 @@ class AccountCommon < ActiveRecord::Base
             :presence => true,
             :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
 
+  validates :pf_luogo_di_nascita,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
   validates :inst_cpe_mac,
             :presence => true,
             :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}

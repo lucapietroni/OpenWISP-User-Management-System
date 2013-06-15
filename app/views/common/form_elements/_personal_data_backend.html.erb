@@ -55,7 +55,7 @@
     <%= form.input :surname, :disabled => !owner.new_record? %>
   </div>  
   
-  
+
   
   <div class="grid_4">  
     <%= form.input :email %>
@@ -65,10 +65,9 @@
     <%= form.input :email_confirmation %>
   </div>
     
-  
+  <div class="clearb"></div>
   <div class="grid_4">
-    <strong><%= form.label :pf_luogo_di_nascita, t("pf_luogo_di_nascita") %></strong>  
-    <%= form.text_field :pf_luogo_di_nascita %>
+    <%= form.input :pf_luogo_di_nascita, :label => t("pf_luogo_di_nascita") %>
   </div>        
   
   <div class="grid_4"> 
@@ -80,18 +79,18 @@
                  :prompt => true
   %>
   </div>
-    
+  <div class="clearb"></div>
   <div class="grid_4">  
     <%= form.input :pf_cf, :label => t("pf_cf") %>
   </div>    
-    
+  
   <div class="grid_4">
     <%= form.input :product_id, :label => t("product") do %>
       <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
     <% end %>  
   </div>    
+    <div class="clearb"></div>
     
-  <div class="clearb"></div>  
   <div class="grid_4">   
     <%= form.input :address %>
   </div>
