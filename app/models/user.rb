@@ -43,9 +43,33 @@ class User < AccountCommon
   validates :product_id, :presence => true
   validates :cpe_template_id, :presence => true
 
+  validates :pf_luogo_di_nascita,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_ragione_sociale, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+
+  validates :pg_indirizzo, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\/\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_comune, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_cap, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
+
+  validates :inst_cpe_mac,
+            :presence => true,
+            :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
+
   has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy
-  has_many :operator_users
+  has_many :operator_users, :dependent => :destroy
   belongs_to :cpe_template
   belongs_to :product
 
