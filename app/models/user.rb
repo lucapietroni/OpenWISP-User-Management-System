@@ -1,3 +1,4 @@
+# encoding: utf-8
 # This file is part of the OpenWISP User Management System
 #
 # Copyright (C) 2012 OpenWISP.org
