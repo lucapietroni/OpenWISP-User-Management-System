@@ -41,6 +41,11 @@
 9:
   system_key: f
   key: "default_radius_group"
+  value: "Machines"
+
+10:
+  system_key: f
+  key: "default_account_radius_group"
   value: "Users"
 
 20:

@@ -49,7 +49,7 @@ class AccountsController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
 
-    @account.radius_groups << RadiusGroup.find_by_name!(Configuration.get('default_radius_group'))
+    @account.radius_groups << RadiusGroup.find_by_name!(Configuration.get('default_account_radius_group'))
 
     @account.captcha_verification = session[:captcha]
 
