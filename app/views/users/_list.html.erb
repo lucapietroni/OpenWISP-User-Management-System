@@ -79,7 +79,7 @@
           <td><%= user.given_name %></td>
           <td><%= user.surname %></td>
           <td><%= user.city %></td>
-          <td><%= user.address %></td>
+          <td><div style="height:30px; overflow:hidden"><%= user.address %></div></td>
           <% if user.verified? %>
               <td><span class="green"><%=t :affirmative %> </span></td>
           <% else %>
