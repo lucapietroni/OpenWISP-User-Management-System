@@ -58,12 +58,12 @@ class UsersController < ApplicationController
   end
 
   def create
-  	#verify_number = check_tax_vat_iban_number
+  	
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
 		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
     @user = User.new(params[:user])
-		check_tax_vat_iban_number(@user)
+		check_iban_number(@user)
     # Parameter anti-tampering
     unless current_operator.has_role? 'users_manager'
       @user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:default_radius_group))]
@@ -76,7 +76,7 @@ class UsersController < ApplicationController
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
 		end		
-    if @user.save and check_tax_vat_iban_number(@user)
+    if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
@@ -93,13 +93,12 @@ class UsersController < ApplicationController
       end
     else
     	update_validation_errors(@user)
-    	check_tax_vat_iban_number(@user)
+    	check_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-#				@user.save(false)
     		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
-                @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+        @user.username = @user.given_name.to_s + "." + @user.surname.to_s
     		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?
 	
@@ -142,7 +141,6 @@ class UsersController < ApplicationController
   def update
   	
     # Parameter anti-tampering
-    params[:user][:radius_group_ids] = nil unless current_operator.has_role? 'users_manager'
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
 
     @countries = Country.all
@@ -153,7 +151,7 @@ class UsersController < ApplicationController
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
 		end	 
-    if @user.update_attributes(params[:user]) and check_tax_vat_iban_number(@user)
+    if @user.update_attributes(params[:user]) and check_iban_number(@user)
     	if current_operator.is_admin
 	    	operator_user = @user.operator_users.first
 	    	if operator_user
@@ -173,7 +171,7 @@ class UsersController < ApplicationController
       end
     else
     	update_validation_errors(@user)
-    	check_tax_vat_iban_number(@user)
+    	check_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
 				@user.inst_cpe_password = @user.crypted_password
@@ -234,20 +232,24 @@ class UsersController < ApplicationController
     end
   end
 
-	def check_tax_vat_iban_number(obj)
-    begin
-      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
-    rescue Exception
-			obj.errors.add(:iban, t("iban_number_is_invalid"))
-			return false
-    end	
-	
-		if iban.valid?
-			return true
+	def check_iban_number(obj)
+		if params[:user][:verification_method] == 'identity_document'
+	    begin
+	      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
+	    rescue Exception
+				obj.errors.add(:iban, t("iban_number_is_invalid"))
+				return false
+	    end	
+		
+			if iban.valid?
+				return true
+			else
+				obj.errors.add(:iban, t("iban_number_is_invalid"))
+				return false
+			end
 		else
-			obj.errors.add(:iban, t("iban_number_is_invalid"))
-			return false
-		end
+			return true
+		end	
 	end
 
   def find
