@@ -85,7 +85,7 @@
   
   <div class="grid_4">
     <%= form.input :product_id, :label => t("product") do %>
-      <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.code, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+      <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
     <% end %>  
   </div>    
     <div class="clearb"></div>
@@ -105,8 +105,12 @@
   </div>
     <div class="grid_7"></div>  
 <div class="grid_4">  
-     <div class="right"><%= link_to t(:verify), "#iban", :id => "user_iban_verify", :class => "button" %></div>
+      <% if owner.verify_with_document? %>
+      <div class="right"><%= link_to t(:verify), "#iban", :id => "user_iban_verify", :class => "button" %></div>
       <%= form.input :iban %>
+      <% else %>
+      <%= form.input :iban, :as => :hidden %>
+      <% end %>
    </div>   
 <div id="mydiv" style="display:none;">
     <iframe id="frame" src="" width="100%" height="300"></iframe>
@@ -166,6 +170,7 @@
 </fieldset>
 <div class="clearb">&nbsp;</div>
 
+<% if owner.verify_with_document? %>
 <fieldset>
   <legend id="pg_user label"><%= t("dati_di_installazione") %></legend>
   
@@ -191,4 +196,5 @@
     <%= form.input :gen_note, :label => t("note") %>
   </div> 
 
-</fieldset>  
+</fieldset> 
+<% end %> 

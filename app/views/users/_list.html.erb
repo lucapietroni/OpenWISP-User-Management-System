@@ -45,11 +45,6 @@
         <%= image_tag("arrow_up.gif", :class =>"arrow_up", :size => "14x14") %>
         <%= image_tag("arrow_down.gif", :class =>"arrow_down", :size => "14x14") %>
       </th>
-      <th scope="col" <%= sort_td_class_helper "state" %>>
-        <%= sort_remote_link_helper t(:State), 'state' %>
-        <%= image_tag("arrow_up.gif", :class =>"arrow_up", :size => "14x14") %>
-        <%= image_tag("arrow_down.gif", :class =>"arrow_down", :size => "14x14") %>
-      </th>
       <th scope="col" <%= sort_td_class_helper "city" %>>
         <%= sort_remote_link_helper t(:City), 'city' %>
         <%= image_tag("arrow_up.gif", :class =>"arrow_up", :size => "14x14") %>
@@ -83,7 +78,6 @@
           <td><%= link_to h(user.username), user %></td>
           <td><%= user.given_name %></td>
           <td><%= user.surname %></td>
-          <td><%= user.state %></td>
           <td><%= user.city %></td>
           <td><%= user.address %></td>
           <% if user.verified? %>

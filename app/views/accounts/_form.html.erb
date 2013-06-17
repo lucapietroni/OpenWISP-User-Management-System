@@ -22,12 +22,10 @@
 <% end %>
 
 
-<% if account.new_record? %>
-    <% if account_verification_methods.length == 1 %>
+<% if Configuration.get('credit_card_enabled') == "true" or account.new_record? %>
         <%= f.input :verification_method, :as => :hidden %>
     <% else %>
         <%= f.input :verification_method, :collection => account_verification_select, :prompt => false %>
-    <% end %>
 <% end %>
 
 

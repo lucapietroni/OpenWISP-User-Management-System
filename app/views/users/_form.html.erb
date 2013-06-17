@@ -44,14 +44,14 @@
   <%= render 'common/form_elements/identity_document', :form => f, :owner => user %>
 <div class="clearb"></div>
   <%= render 'common/form_elements/mobile_phone_user', :form => f, :owner => user, :prefixes => mobile_prefixes %>
-  <div class="clearb"></div>
-  <% if current_operator.is_admin? %>
+  <div class="clearb">&nbsp;</div>
+  <% if current_operator.is_admin? && @user.verify_with_document? %>
     <div class="grid_4">
-      <strong><%= t("Operator") %></strong><br />
-      <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.code, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
+      <strong><%= t("Operator") %></strong><br/>
+      <%= select_tag "operator_id", options_for_select([t("select_operator")] + Operator.where("code IS NOT NULL AND is_admin = 0").collect {|r| [r.login, r.id]}, (user.operator_users.first.operator_id unless user.operator_users.first.nil?)) %>
     </div>
   <% end %>
-  <div class="clearb"></div>
+  <div class="clearb">&nbsp;</div>
 
 <% if user.new_record? %>
   <div class="grid_4">

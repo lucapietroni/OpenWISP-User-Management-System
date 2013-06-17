@@ -37,20 +37,20 @@ class User < AccountCommon
 
   # Validations
   validate :verification_method_inclusion
-  validates :pf_cf, :codice_fiscale_format => true
+  validates :pf_cf, :if => :verify_with_document?, :codice_fiscale_format => true, :presence => true
   validates :pg_partita_iva, :partita_iva_format => true
   
-  validates :iban, :presence => true
-  validates :product_id, :presence => true
-  validates :cpe_template_id, :presence => true
+  validates :iban, :if => :verify_with_document?, :presence => true
+  validates :product_id, :if => :verify_with_document?, :presence => true
+  validates :cpe_template_id, :if => :verify_with_document?, :presence => true
 
-  validates :pf_luogo_di_nascita,
+  validates :pf_luogo_di_nascita, :if => :verify_with_document?,
             :presence => true,
             :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
 
   validates :pg_ragione_sociale, :if => :is_company?,
             :presence => true,
-            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
 
   validates :pg_indirizzo, :if => :is_company?,
             :presence => true,
@@ -64,7 +64,7 @@ class User < AccountCommon
             :presence => true,
             :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
 
-  validates :inst_cpe_mac,
+  validates :inst_cpe_mac, :if => :verify_with_document?,
             :presence => true,
             :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
 
