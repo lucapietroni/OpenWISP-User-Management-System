@@ -1,0 +1,13 @@
+<div class="grid_12">
+  <div class="box">
+  <h2><%= t("browse_products") %></h2>
+  <div id="main_div">
+    <%= form_tag products_path, :method => 'get', :id => "div_update_search" do %>
+      <%= render "common/search" %>
+    <% end %>
+    <div id="div_update">
+       <%= render 'fetchAll' %>
+    </div>
+    </div>
+</div>  
+</div>

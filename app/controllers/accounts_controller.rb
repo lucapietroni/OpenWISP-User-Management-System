@@ -33,14 +33,22 @@ class AccountsController < ApplicationController
   STATS_PERIOD = 14
 
   def new
-    @account = Account.new( :verification_method => Account::VERIFY_BY_MOBILE, :state => 'Italy' )
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
-
+    if Configuration.get("credit_card_enabled") == "true"
+        @account = Account.new( :verification_method => Account::VERIFY_BY_CREDIT_CARD, :state => 'Italy' )
     respond_to do |format|
       format.html
       format.mobile
       format.xml { render_if_xml_restful_enabled }
+      end
+    else
+        @account = Account.new( :verification_method => Account::VERIFY_BY_MOBILE, :state => 'Italy' )
+    respond_to do |format|
+      format.html
+      format.mobile
+      format.xml { render_if_xml_restful_enabled }
+      end
     end
   end
 
@@ -49,13 +57,14 @@ class AccountsController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
 
-    @account.radius_groups << RadiusGroup.find_by_name!(Configuration.get('default_radius_group'))
+    @account.radius_groups << RadiusGroup.find_by_name!(Configuration.get('default_account_radius_group'))
 
     @account.captcha_verification = session[:captcha]
 
     save_account = request.format.xml? ? @account.save : @account.save_with_captcha
 
     if save_account
+    	OperatorUser.create(:user_id => @account.id).save
       respond_to do |format|
         format.html { redirect_to account_path }
         format.mobile { redirect_to account_path }

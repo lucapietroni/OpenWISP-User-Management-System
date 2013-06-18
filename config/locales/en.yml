@@ -38,6 +38,7 @@ en:
         email_invalid: "should look like an e-mail address"
         eula_must_be_accepted: "must be accepted"
         privacy_must_be_accepted: "must be accepted"
+        mac_format: "esempio 00:80:C8:E9:8B:01"
     attributes:
       account:
         image_file: "ID card scan"

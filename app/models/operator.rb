@@ -48,10 +48,12 @@ class Operator < ActiveRecord::Base
 
   attr_readonly :login
 
-  attr_accessible :login, :password, :password_confirmation, :notes, :roles
+  attr_accessible :login, :password, :password_confirmation, :notes, :roles, :code, :is_admin
 
   # Access current_operator from models
   cattr_accessor :current_operator
+  
+  has_many :operator_users
 
   def initialize(params = nil)
     super(params)

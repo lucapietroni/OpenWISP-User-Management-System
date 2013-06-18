@@ -1,0 +1,115 @@
+diff --git a/app/mailers/notifier.rb b/app/mailers/notifier.rb
+index 64e11fd..908cd94 100644
+--- a/app/mailers/notifier.rb
++++ b/app/mailers/notifier.rb
+@@ -21,6 +21,24 @@ class Notifier < ActionMailer::Base
+ 
+   default :from => Configuration.get('password_reset_from')
+ 
++  def new_account_notification(account)
++    @user = account
++    subject = Configuration.get("account_notification_subject_#{I18n.locale}")
++    @message = Configuration.get("account_notification_message_#{I18n.locale}")
++    
++    dictionary = {
++      :first_name => @user.given_name,
++      :last_name => @user.surname,
++      :username => @user.username
++    }
++    
++    dictionary.each do |key, value|
++      @message.gsub!("{%s}" % key.to_s, value.to_s)
++    end
++    
++    mail :to => account.email, :subject => subject
++  end
++
+   def password_reset_instructions(account)
+     if Configuration.get('password_reset_custom_url_enabled') == 'true'
+       @reset_url = Configuration.get('password_reset_custom_url') + account.perishable_token
+diff --git a/app/models/account_common.rb b/app/models/account_common.rb
+index 3435228..a9ffdeb 100644
+--- a/app/models/account_common.rb
++++ b/app/models/account_common.rb
+@@ -257,6 +257,12 @@ def password_reset_instructions!
+     reset_perishable_token!
+     Notifier.password_reset_instructions(self).deliver
+   end
++  
++  def new_account_notification!
++    if Configuration.get['send_email_notification_to_users']
++      Notifier.new_account_notification(self).deliver
++    end
++  end
+ 
+   def mobile_prefix_confirmation=(value)
+     write_attribute(:mobile_prefix_confirmation, value)
+diff --git a/app/models/user.rb b/app/models/user.rb
+index fc2933d..54a6153 100644
+--- a/app/models/user.rb
++++ b/app/models/user.rb
+@@ -167,6 +167,7 @@ def credit_card_identity_verify!
+     if self.verify_with_paypal? or verify_with_gestpay?
+       self.verified = true
+       self.save!
++      self.new_account_notification!
+     else
+       Rails.logger.error("Verification method is not 'paypal_credit_card' nor 'gestpay_credit_card'!")
+     end
+@@ -176,6 +177,7 @@ def mobile_phone_identity_verify!
+     if self.verify_with_mobile_phone?
+       self.verified = true
+       self.save!
++      self.new_account_notification!
+     else
+       Rails.logger.error("Verification method is not 'mobile_phone'!")
+     end
+diff --git a/db/fixtures/configurations.yml b/db/fixtures/configurations.yml
+index 27a69a1..013b239 100644
+--- a/db/fixtures/configurations.yml
++++ b/db/fixtures/configurations.yml
+@@ -227,5 +227,35 @@ Se continui ad avere problemi per il reset della password, per piacere contattac
+   system_key: f
+   key: "gestpay_payment_url"
+   value: "https://testecomm.sella.it/gestpay/pagam.asp"
+-  
+-  
+\ No newline at end of file
++
++80:
++  system_key: f
++  key: "account_notification_message_en"
++  value: "Hi {first_name} {last_name},
++You just created and verified successfully your account for wifi access.
++
++You can now login and use the wifi service with username \"{username}\" and the password you chose during the registration phase.
++
++Staff"
++
++81:
++  system_key: f
++  key: "account_notification_message_it"
++  value: "Ciao {first_name} {last_name},
++
++Hai appena creato e verificato con successo il tuo account per l'accesso al wifi.
++
++Ora puoi effettuare il login e usare il servizio wifi, il tuo username è \"{username}\" e la password è quella che hai scelto in fase di registrazione.
++
++Cordiali Saluti
++Staff"
++
++82:
++  system_key: f
++  key: "account_notification_subject_en"
++  value: "New account created on [OpenWISP User Management System]"
++
++83:
++  system_key: f
++  key: "account_notification_subject_it"
++  value: "Nuovo account creato su [OpenWISP User Management System]"
++
++84:
++  system_key: f
++  key: "send_email_notification_to_users"
++  value: "false"
+\ No newline at end of file

@@ -30,7 +30,7 @@ Operator.delete_all
 
 # Create 'admin' user. Login: 'admin', Password: 'admin' and give it admin powers
 puts "Creating admin with password admin and roles 'users_destroyer users_manager users_viewer users_registrant'..."
-admin = Operator.new :login => 'admin', :password => 'admin', :password_confirmation => 'admin', :notes => 'admin'
+admin = Operator.new :login => 'admin', :password => 'admin', :password_confirmation => 'admin', :notes => 'admin', :is_admin => true
 Operator::ROLES.each { |r| admin.has_role! r }
 admin.save(false)
 

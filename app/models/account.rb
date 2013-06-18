@@ -30,6 +30,7 @@ class Account < AccountCommon
   # Validations
   validates_inclusion_of :verification_method, :in => User.self_verification_methods, :if => Proc.new{|account| account.new_record? }
   validate :valid_captcha?, :message => 'dummy', :on => :create, :if => Proc.new{|account| account.validate_captcha? }
+  validates :product_id, :presence => true, :if => Configuration.get('credit_card_enabled')
 
   # Security and cleanup
   attr_readonly  :given_name, :surname, :birth_date
@@ -38,7 +39,7 @@ class Account < AccountCommon
                   :email, :email_confirmation, :password, :password_confirmation,
                   :mobile_prefix, :mobile_prefix_confirmation, :mobile_suffix, 
                   :mobile_suffix_confirmation, :verification_method,
-                  :eula_acceptance, :privacy_acceptance, :captcha
+                  :eula_acceptance, :privacy_acceptance, :captcha, :product_id
 
   def validate_captcha?
     @validate_captcha == true

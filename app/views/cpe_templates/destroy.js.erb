@@ -1,0 +1,5 @@
+$("#div_update").html("<%= escape_javascript(render("fetchAll")) %>");
+
+$('#notice').html("<%= escape_javascript(t("successfully_destroyed")) %>").animate({height: '20px', opacity: 1}, function() {
+  $(this).delay(2000).animate({height: '0px', opacity: 0});
+});

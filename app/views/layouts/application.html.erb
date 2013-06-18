@@ -10,20 +10,21 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 #%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title><%= t :Users_management %></title>
-
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
   <%= stylesheet_link_tag 'fluid960/reset' %>
   <%= stylesheet_link_tag 'fluid960/text' %>
   <%= stylesheet_link_tag 'fluid960/960' %>
@@ -51,6 +52,8 @@
   <%= content_for :after_defaults %>
 
   <%= javascript_include_tag 'fluid16' %>
+  
+  <%= javascript_include_tag 'common' %>
 
   <link rel="shortcut icon" href="<%= image_path 'openwisp.ico' %>"/>
   <%= csrf_meta_tag %>
@@ -64,7 +67,7 @@
       <tr>
         <td style="text-align:left">
           <h1 id="branding">
-            OpenWISP User Management System
+            Meshcom User Management System
           </h1>
         </td>
         <td style="text-align:right">
@@ -126,18 +129,40 @@
                 <%= menu_link_to t(:Operators), '#' %>
                 <ul>
                   <li><%= menu_link_to t(:Browse_operators), operators_url %></li>
-                  <li><%= menu_link_to t(:Add_new_operator), new_operator_url %></li>
+                  <% if current_operator.is_admin %>
+                    <li><%= menu_link_to t(:Add_new_operator), new_operator_url %></li>
+                  <% end %>
                 </ul>
               </li>
           <% end %>
-          <li>
-            <%= menu_link_to t(:System_settings), '#' %>
-            <ul>
-              <% if current_operator.has_role? 'configurations_manager' %>
-                  <li><%= menu_link_to t(:Configuration_keys), configurations_url %></li>
-              <% end %>
-            </ul>
-          </li>
+          <% if current_operator.has_role? 'configurations_manager' %>
+            <li>
+              <%= menu_link_to t(:System_settings), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:Configuration_keys), configurations_url %></li>
+              </ul>
+            </li>               
+          <% end %>
+          <% if current_operator.has_role? 'configurations_manager' %>
+            <li>
+              <%= menu_link_to t(:products), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:browse_products), products_url %></li>
+                 <li><%= menu_link_to t(:add_products), new_product_url %></li>
+              </ul>
+            </li>               
+          <% end %>
+
+          <% if current_operator.has_role? 'configurations_manager' %>
+            <li>
+              <%= menu_link_to t(:cpe_templates), '#' %>
+              <ul>
+                 <li><%= menu_link_to t(:browse_cpe_templates), cpe_templates_url %></li>
+                 <li><%= menu_link_to t(:add_cpe_templates), new_cpe_template_url %></li>
+              </ul>
+            </li>     
+          <% end %>
+          
           <li class="secondary"><%= menu_link_to t(:Logout), operator_logout_url, :method => :delete %></li>
           <li class="secondary"><%= menu_link_to t(:Home), operator_url(current_operator) %></li>
       <% else %>
@@ -163,12 +188,13 @@
     </div>
   </div>
   <div class="clear"></div>
+  <div class="alert-success" id="flash_destroy_notice"></div>
 
   <%= yield %>
 
   <div class="grid_12" id="site_info">
     <div class="box" style="text-align:center">
-      <p>OpenWISP User Management System - Copyright (C) 2012 <a href="http://openwisp.org/">OpenWISP.org</a></p>
+      <p>Meshcom User Management System - Copyright (C) 2013</p>
 
       <% if is_mobile_device? %>
           <p><%= link_to_toggle_mobile %></p>

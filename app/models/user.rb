@@ -1,3 +1,4 @@
+# encoding: utf-8
 # This file is part of the OpenWISP User Management System
 #
 # Copyright (C) 2012 OpenWISP.org
@@ -36,15 +37,51 @@ class User < AccountCommon
 
   # Validations
   validate :verification_method_inclusion
+  validates :pf_cf, :if => :verify_with_document?, :codice_fiscale_format => true, :presence => true
+  validates :pg_partita_iva, :partita_iva_format => true
+  
+  validates :iban, :if => :verify_with_document?, :presence => true
+  validates :product_id, :if => :verify_with_document?, :presence => true
+  validates :cpe_template_id, :if => :verify_with_document?, :presence => true
+
+  validates :pf_luogo_di_nascita, :if => :verify_with_document?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_ragione_sociale, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+
+  validates :pg_indirizzo, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\/\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_comune, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+
+  validates :pg_cap, :if => :is_company?,
+            :presence => true,
+            :format => {:with => /[a-z0-9]/, :message => :zip_format, :allow_blank => true}
+
+  validates :inst_cpe_mac, :if => :verify_with_document?,
+            :presence => true,
+            :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
 
   has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy
+  has_many :operator_users, :dependent => :destroy
+  belongs_to :cpe_template
+  belongs_to :product
 
   attr_accessible :given_name, :surname, :birth_date, :state, :city, :address, :zip,
                   :email, :email_confirmation, :password, :password_confirmation,
                   :mobile_prefix, :mobile_suffix, :verified, :verification_method,
                   :notes, :eula_acceptance, :privacy_acceptance,
-                  :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids
+                  :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids,
+                  :tax_code, :vat_number, :iban, :product_id, :cpe_template_id, :pg_ragione_sociale, :pg_partita_iva,
+                  :pg_indirizzo, :pg_cap, :pf_cf, :pf_luogo_di_nascita, :inst_indirizzo, :inst_cap, :inst_cpe_modello,
+                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note, :is_company, :pg_comune
 
   # Custom validations
 
@@ -167,6 +204,7 @@ class User < AccountCommon
     if self.verify_with_credit_card?
       self.verified = true
       self.save!
+      self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'credit_card'!")
     end
@@ -176,6 +214,7 @@ class User < AccountCommon
     if self.verify_with_mobile_phone?
       self.verified = true
       self.save!
+      self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'mobile_phone'!")
     end

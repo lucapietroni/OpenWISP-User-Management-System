@@ -23,7 +23,9 @@
       <%= simple_form_for @account, :url => account_path do |f| %>
           <fieldset>
             <legend><%=t :Register %></legend>
-            <p><%= f.error_messages %></p>
+            <% unless f.error_messages.empty? %>
+              <p style="color:red;"><%= t("please_fill_required_fields") %></p>
+            <% end %>  
 
             <%= render 'form', :f => f, :account => @account, :countries => @countries, :mobile_prefixes => @mobile_prefixes %>
           </fieldset>
