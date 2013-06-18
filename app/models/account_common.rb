@@ -1,3 +1,4 @@
+# encoding: utf-8
 # This file is part of the OpenWISP User Management System
 #
 # Copyright (C) 2012 OpenWISP.org
@@ -52,7 +53,7 @@ class AccountCommon < ActiveRecord::Base
 
   # Validations
   validates :username,
-            :presence => true,
+#            :presence => true,
             :uniqueness => {:allow_blank => true},
             :length => {:in => 4..64, :allow_blank => true},
             :format => {:with => /\A[a-z0-9_\-\.@]+\Z/i, :allow_blank => true}
@@ -90,7 +91,7 @@ class AccountCommon < ActiveRecord::Base
 
   validates :given_name,
             :presence => true,
-            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+            :format => {:with => /\A(\w|[\àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
 
   validates :surname,
             :presence => true,
@@ -229,6 +230,12 @@ class AccountCommon < ActiveRecord::Base
   def password_reset_instructions!
     reset_perishable_token!
     Notifier.password_reset_instructions(self).deliver
+  end
+  
+  def new_account_notification!
+    if Configuration.get['send_email_notification_to_users']
+      Notifier.new_account_notification(self).deliver
+    end
   end
 
   def mobile_prefix_confirmation=(value)

@@ -42,6 +42,22 @@
         <%= f.password_field :password_confirmation %>
       </p>
 
+      <p>
+        <strong><%= label_tag t(:code) %>:</strong>
+        <br />
+        <%= f.text_field :code %>
+      </p>
+
+    <% if current_operator.is_admin %>
+      <p>
+        <strong><%= label_tag t(:is_admin) %>:</strong>
+        <br />
+        <%= f.check_box :is_admin %>
+      </p>
+    <% end %>  
+      
+      
+
       <p><strong><%= label_tag t(:Roles) %>:</strong></p>
       <table id="operator_roles">
         <thead>

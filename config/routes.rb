@@ -29,6 +29,9 @@ Owums::Application.routes.draw do
   match '/users/browse' => 'users#index', :as => :users_browse
   match '/users/search' => 'users#search', :as => :users_search
   match '/users/find' => 'users#find', :via => 'post'
+  
+  match '/createdownload/:id' => 'users#createdownload', :as => :createdownload
+  match '/createPDF/:id' => 'users#createPDF', :as => :createPDF
 
   match '/mobile_phone_password_resets/:id/recovery_confirmation' => 'mobile_phone_password_resets#recovery_confirmation', :as => :recovery_confirmation
 
@@ -39,6 +42,9 @@ Owums::Application.routes.draw do
   match '/operator/logout' => 'operator_sessions#destroy', :as => :operator_logout, :via => :delete
 
   match '/toggle_mobile' => 'application#toggle_mobile', :as => :toggle_mobile
+  
+  match '/cpe_template_delete/:id' => 'cpe_templates#destroy', :as => :cpe_template_delete
+  match '/product_delete/:id' => 'products#destroy', :as => :product_delete
   ####################
 
   #### Resources --->
@@ -48,6 +54,8 @@ Owums::Application.routes.draw do
   resource :account_session
   resource :operator_session
   resources :configurations
+  resources :products
+  resources :cpe_templates
   resources :users do
     resources :stats, :only => :show
     resources :radius_checks
