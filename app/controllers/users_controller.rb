@@ -174,9 +174,9 @@ class UsersController < ApplicationController
     	check_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
+				@user.inst_cpe_password = @user.crypted_password
 				@user.save(:validate=>false)
 				@user = User.find(@user.id)
-				@user.inst_cpe_password = @user.crypted_password
 				@user.radius_group_ids = radius_group_ids
 				@user.save
 	    	if current_operator.is_admin
