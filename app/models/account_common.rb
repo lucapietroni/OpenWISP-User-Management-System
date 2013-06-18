@@ -231,6 +231,12 @@ class AccountCommon < ActiveRecord::Base
     reset_perishable_token!
     Notifier.password_reset_instructions(self).deliver
   end
+  
+  def new_account_notification!
+    if Configuration.get['send_email_notification_to_users']
+      Notifier.new_account_notification(self).deliver
+    end
+  end
 
   def mobile_prefix_confirmation=(value)
     write_attribute(:mobile_prefix_confirmation, value)

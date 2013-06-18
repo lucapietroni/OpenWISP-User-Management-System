@@ -204,6 +204,7 @@ class User < AccountCommon
     if self.verify_with_credit_card?
       self.verified = true
       self.save!
+      self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'credit_card'!")
     end
@@ -213,6 +214,7 @@ class User < AccountCommon
     if self.verify_with_mobile_phone?
       self.verified = true
       self.save!
+      self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'mobile_phone'!")
     end
