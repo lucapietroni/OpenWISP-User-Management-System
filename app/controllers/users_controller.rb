@@ -58,7 +58,6 @@ class UsersController < ApplicationController
   end
 
   def create
-  	
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
 		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
@@ -139,9 +138,10 @@ class UsersController < ApplicationController
   end
 
   def update
-  	
     # Parameter anti-tampering
+    params[:user][:radius_group_ids] = nil unless current_operator.has_role? 'users_manager'
     params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
+    radius_group_ids = params[:user][:radius_group_ids]
 
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
@@ -174,8 +174,11 @@ class UsersController < ApplicationController
     	check_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-				@user.inst_cpe_password = @user.crypted_password
 				@user.save(:validate=>false)
+				@user = User.find(@user.id)
+				@user.inst_cpe_password = @user.crypted_password
+				@user.radius_group_ids = radius_group_ids
+				@user.save
 	    	if current_operator.is_admin
 		    	operator_user = @user.operator_users.first
 		    	if operator_user
@@ -233,7 +236,7 @@ class UsersController < ApplicationController
   end
 
 	def check_iban_number(obj)
-		if params[:user][:verification_method] == 'identity_document'
+		if params[:user][:verification_method] == 'credit_card'
 	    begin
 	      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
 	    rescue Exception
