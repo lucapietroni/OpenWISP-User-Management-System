@@ -41,10 +41,10 @@
 <% if account.new_record? %>
     <% if(Configuration.get('captcha_enabled', 'true') == 'true') %>
     
-    <div id="captcha">
+    <div id="captcha"><div class="clearb">&nbsp;</div>
       <div class="grid_4">
        <%= f.input :captcha %>
-      </div>      
+      </div>
       <div class="grid_4">
         <p class="center">
           <%= captcha_tag %><br />
@@ -56,7 +56,7 @@
     
     
     <% end %>
-
+<div class="clearb">&nbsp;</div>
     <div id="eula_priv">
       <div class="grid_4">
       <%= link_to t(:Click_for_eula), document_path('eula.pdf'), :target => '_blank' %>

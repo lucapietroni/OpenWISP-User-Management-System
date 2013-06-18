@@ -51,7 +51,7 @@
 20:
   system_key: f
   key: "credit_card_enabled"
-  value: "false"
+  value: "true"
     
 21:
   system_key: f
@@ -121,7 +121,7 @@
 43:
   system_key: f
   key: "use_automatic_username"
-  value: "false"
+  value: "true"
 
 50:
   system_key: f
