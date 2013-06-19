@@ -70,9 +70,22 @@
             Meshcom User Management System
           </h1>
         </td>
+        <p id="locale">
         <td style="text-align:right">
           <%= link_to_locale 'it' %> <%= link_to_locale 'en' %>
         </td>
+        </p>
+    <% if authenticated? %>
+       <% if current_operator %>
+       <p id="whoami">
+       <%= t :logged_in_as %> <%= link_to_user_or_operator %>
+       </p>
+       <% else %>
+       <p id="whoami">
+       <%= t :welcome %> <%= link_to_user_or_operator %>
+       </p>
+       <% end %>
+    <% end %>
       </tr>
     </table>
   </div>

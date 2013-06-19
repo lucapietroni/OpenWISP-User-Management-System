@@ -123,6 +123,8 @@ it:
   Loading: "Caricamento"
   Loading_data: "Caricamento dati: attendere"
   Logged_in: "Online?"
+  logged_in_as: "Autenticato come"
+  welcome: "Benvenuto/a"
   Loggedin_users: "Utenti attualmente connessi"
   Login: "Accedi"
   Logins: "Accessi"

@@ -142,5 +142,17 @@ module ApplicationHelper
     direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
     link_to title, params.merge(:sort => column, :direction => direction, :page => nil), {:class => css_class}
   end  
+  
+  def authenticated?
+    current_account or @current_operator
+  end
+  
+  def link_to_user_or_operator
+    if current_account
+      link_to(@current_account.given_name, account_url)
+    elsif @current_operator
+      link_to(@current_operator.login, root_url)
+    end
+  end
 
 end
