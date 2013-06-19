@@ -1,4 +1,4 @@
-== OpenWISP User Management System - Meshcom Fork
+== OpenWISP User Management System - Meshcom Fork - dev
 
 == What is it?
 
