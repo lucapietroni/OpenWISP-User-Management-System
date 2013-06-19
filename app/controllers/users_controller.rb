@@ -58,7 +58,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
+    
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
 		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
     @user = User.new(params[:user])
@@ -140,7 +140,6 @@ class UsersController < ApplicationController
   def update
     # Parameter anti-tampering
     params[:user][:radius_group_ids] = nil unless current_operator.has_role? 'users_manager'
-    params[:user][:radius_group_ids].uniq! if params[:user] && params[:user][:radius_group_ids]
     radius_group_ids = params[:user][:radius_group_ids]
 
     @countries = Country.all
@@ -236,7 +235,7 @@ class UsersController < ApplicationController
   end
 
 	def check_iban_number(obj)
-		if params[:user][:verification_method] == 'credit_card'
+		if obj.verification_method == 'identity_document'
 	    begin
 	      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
 	    rescue Exception
