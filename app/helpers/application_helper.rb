@@ -154,5 +154,18 @@ module ApplicationHelper
       link_to(@current_operator.login, root_url)
     end
   end
-
+  
+  def is_radius_counters_reached?
+		rad_acc = RadiusAccounting.find_by_username(current_account.username)
+		#radius_check_att = current_account.radius_checks.radius_check_att_value
+		if rad_acc
+			if Time.now.to_time > rad_acc.acct_stop_time.to_time 
+				return true
+			else	
+				return false
+			end
+		else
+			return false
+		end
+	end
 end

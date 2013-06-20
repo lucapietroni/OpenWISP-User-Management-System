@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class RadiusCheck < ActiveRecord::Base
+	VERIFY_CHECK_ATTRIBUTE = "Max-All-Session"
   validates_presence_of :check_attribute
   validates_uniqueness_of :check_attribute, :scope => [ :radius_entity_id, :radius_entity_type ]
   validates_presence_of :op
@@ -26,4 +27,7 @@ class RadiusCheck < ActiveRecord::Base
 
   attr_accessible :check_attribute, :op, :value, :radius_entity
 
+	def self.radius_check_att_value
+		where(:check_attribute => VERIFY_CHECK_ATTRIBUTE).first
+	end
 end

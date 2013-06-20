@@ -209,8 +209,10 @@ class Account < AccountCommon
         :lc => I18n.locale.to_s.upcase
     }
 
+		cost = self.product.code.split("<")
     values.merge!({
-                      "amount_1" => Configuration.get("credit_card_verification_cost"),
+                      #"amount_1" => self.product_idConfiguration.get("credit_card_verification_cost"),
+                      "amount_1" => (cost[0] unless cost.empty?),
                       "item_name_1" => I18n.t(:credit_card_item_name),
                       "item_number_1" => self.id,
                       "quantity_1" => 1

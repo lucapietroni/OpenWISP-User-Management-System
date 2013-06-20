@@ -25,6 +25,7 @@ Owums::Application.routes.draw do
   match '/account/verification' => 'accounts#verification', :as => :verification
   match '/account/verify_credit_card' => 'accounts#verify_credit_card', :as => :verify_credit_card, :via => 'post'
   match '/account/secure_verify_credit_card' => 'accounts#secure_verify_credit_card', :as => :secure_verify_credit_card, :via => 'post'
+  match '/account/buy_product' => 'accounts#buy_product', :as => :buy_product
 
   match '/users/browse' => 'users#index', :as => :users_browse
   match '/users/search' => 'users#search', :as => :users_search

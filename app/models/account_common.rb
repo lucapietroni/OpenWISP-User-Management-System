@@ -90,24 +90,20 @@ class AccountCommon < ActiveRecord::Base
             :format => {:with => /\A[0-9]+\Z/, :message => :mobile_suffix_format, :allow_blank => true}
 
   validates :given_name,
-            :presence => true,
-            :format => {:with => /\A(\w|[\àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+            :presence => true
 
   validates :surname,
-            :presence => true,
-            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
+            :presence => true
 
   validates :state,
             :presence => true,
             :format => {:with => /\A[a-z\s'\.,]+\Z/i, :message => :address_format}
 
   validates :city,
-            :presence => true,
-            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+            :presence => true
 
   validates :address,
-            :presence => true,
-            :format => {:with => /\A(\w|[\s'\.,\/\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
+            :presence => true
 
   validates :zip,
             :presence => true,
@@ -125,8 +121,10 @@ class AccountCommon < ActiveRecord::Base
 
   # Relations
   has_and_belongs_to_many :radius_groups, :join_table => 'radius_groups_users', :foreign_key => 'user_id'
+  has_and_belongs_to_many :products, :join_table => 'user_products', :foreign_key => 'user_id'
   has_many :radius_accountings, :foreign_key => :UserName, :primary_key => :username
-
+  has_many :radius_checks, :as => :radius_entity, :dependent => :destroy
+  belongs_to :product
   # This is a virtual class. See User and Account classes
   attr_accessible
 

@@ -29,5 +29,13 @@ class RadiusGroup < ActiveRecord::Base
   def radius_name
     name
   end
+  
+  def self.search(search)
+    if search
+      where('notes LIKE ?', "%<#{search}>%").first
+    else
+      find_by_name!(Configuration.get('default_account_radius_group'))
+    end
+  end  
 
 end

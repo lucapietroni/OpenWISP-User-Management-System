@@ -84,9 +84,15 @@
   </div>    
   
   <div class="grid_4">
-    <%= form.input :product_id, :label => t("product") do %>
-      <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
-    <% end %>  
+      <% if current_operator.is_admin? && @user.verify_with_document? %>
+        <%= form.input :product_ids, :label => t("product") do %>
+          <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.products.map {|j| j.product_id})), {}, {:multiple => true} %>
+        <% end %>  
+      <% else %>
+        <%= form.input :product_id, :label => t("product") do %>
+          <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+        <% end %>  
+      <% end %>  
   </div>    
     <div class="clearb"></div>
     
@@ -160,10 +166,10 @@
 <div class="grid_4" style="margin-top:-15px;float: left;">
   <div id="eula_priv">
     <%= link_to t(:Click_for_eula), document_path('eula.pdf'), :target => '_blank', :id => "acceptance" %>
-    <%= form.input :eula_acceptance, :error => true %>
+    <%= form.input :eula_acceptance %>
   
     <%= link_to t(:Click_for_privacy), document_path('privacy.pdf'), :target => '_blank', :id => "privacy" %>
-    <%= form.input :privacy_acceptance, :error => true %>
+    <%= form.input :privacy_acceptance %>
   </div>
 </div>
 

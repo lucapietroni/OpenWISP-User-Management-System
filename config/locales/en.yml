@@ -76,6 +76,7 @@ en:
         privacy_acceptance: "By clicking on the checkbox below the user declares to agree to the Privacy Policy"
         new:
           password: 'Password'
+          
         edit:
           password: 'New password'
 
@@ -105,3 +106,11 @@ en:
       previous: "&laquo; previous"
       next: "next &raquo;"
       truncate: "..."
+
+  buy_product: "Buy Product"
+  buy_new_product: "Buy new product"
+  product: "Product"      
+  product_can_not_be_blank: "Product can't be blank"
+  radius_group_not_found: "radius group not found"
+  your_surfing_time_is_finished: "Dear %{username}, your surfing time is finished, you can buy a new package to continue to surf."
+  buy_new_product: "Buy new package"

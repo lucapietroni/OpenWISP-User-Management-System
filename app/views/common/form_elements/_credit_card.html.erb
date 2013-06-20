@@ -25,7 +25,7 @@
             <tr>
               <td>
                 <%= form.input :product_id, :label => t("product") do %>
-      <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+                <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
     <% end %>
               </td>
             </tr>

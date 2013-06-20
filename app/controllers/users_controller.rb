@@ -61,6 +61,7 @@ class UsersController < ApplicationController
     
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
 		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
+ 
     @user = User.new(params[:user])
 		check_iban_number(@user)
     # Parameter anti-tampering
@@ -177,6 +178,7 @@ class UsersController < ApplicationController
 				@user.save(:validate=>false)
 				@user = User.find(@user.id)
 				@user.radius_group_ids = radius_group_ids
+				@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids] 
 				@user.save
 	    	if current_operator.is_admin
 		    	operator_user = @user.operator_users.first

@@ -23,6 +23,7 @@
         <fieldset>
           <legend><%=t :Edit_user %></legend>
           <% unless f.error_messages.empty? %>
+          <%#= f.error_messages %>
             <p style="color:red;"><%= t("please_fill_required_fields") %></p>
           <% end %>  
 

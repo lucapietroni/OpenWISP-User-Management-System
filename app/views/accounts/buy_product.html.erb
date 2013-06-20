@@ -1,0 +1,39 @@
+<div class="grid_12">
+  <div class="box">
+    <div class="block" id="general_info">
+      
+      <p><strong><%= t(:buy_new_product) %></strong></p>
+      
+        <div class="verification-block">
+          <table>
+            <tr>
+              <td>
+                <% if @verify == true %>
+                  <%= link_to_paypal image_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>            
+                <% else %>
+                    <%= simple_form_for @account, :url => buy_product_path, :method => "post" do |form| %>
+                    <div class="grid_5">
+                      <% if flash[:error] %>
+                        <div class="clearb">&nbsp;</div>
+                        <div class="input string required field_with_errors">
+                          <div class="error"><%= flash[:error] %></div>
+                         </div> 
+                      <% end %>                       
+                      <%= form.input :product_id, :label => t("product") do %>
+                        <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}) %>
+                      <% end %>
+                     </div> 
+                     <div class="clearb"></div>
+                      <div class="grid_2" style="margin-top: 12px;">
+                        <%= form.button :submit, t("buy_product") %>
+                      </div>                    
+                    <% end %>
+                  <% end %>  
+              </td>
+            </tr>
+          </table>
+        </div>      
+      
+    </div>
+  </div>
+</div>    

@@ -56,8 +56,15 @@ class AccountsController < ApplicationController
     @account = Account.new(params[:account])
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
-
-    @account.radius_groups << RadiusGroup.find_by_name!(Configuration.get('default_account_radius_group'))
+		
+		#assign radius group to user
+		unless params[:account][:product_id].blank?
+			product = Product.find(params[:account][:product_id])
+			radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
+			if radius_group
+				@account.radius_groups << radius_group
+			end
+		end
 
     @account.captcha_verification = session[:captcha]
 
@@ -236,6 +243,27 @@ class AccountsController < ApplicationController
 
   def instructions
     @custom_instructions = Configuration.get('custom_account_instructions')
+  end
+  
+  def buy_product
+  	@verify = false
+  	if params[:account]
+			#assign radius group to user
+			unless params[:account][:product_id].blank?
+				product = Product.find(params[:account][:product_id])
+				radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
+				if radius_group
+					@account.radius_groups << radius_group
+					@account.product_id = params[:account][:product_id]
+					@account.save
+					@verify = true
+				else
+					flash[:error] = t('radius_group_not_found')
+				end
+			else
+				flash[:error] = t('product_can_not_be_blank')
+			end
+  	end
   end
 
   private
