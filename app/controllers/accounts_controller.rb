@@ -253,7 +253,7 @@ class AccountsController < ApplicationController
 				product = Product.find(params[:account][:product_id])
 				radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
 				if radius_group
-					@account.radius_groups << radius_group
+					@account.radius_group_ids = [radius_group.id]
 					@account.product_id = params[:account][:product_id]
 					@account.save
 					@verify = true
