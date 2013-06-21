@@ -156,14 +156,20 @@ module ApplicationHelper
   end
   
   def is_radius_counters_reached?
-		rad_acc = RadiusAccounting.find_by_username(current_account.username)
-		#radius_check_att = current_account.radius_checks.radius_check_att_value
+		rad_acc = RadiusAccounting.where(:username => current_account.username)
+		total_sec = 0
 		if rad_acc
-			if Time.now.to_time > rad_acc.acct_stop_time.to_time 
-				return true
-			else	
-				return false
+			rad_acc.each do |rad|
+				if rad.acct_stop_time and rad.acct_start_time
+					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
+				end	
 			end
+			radius_check_att = current_account.radius_groups.first.radius_checks.radius_check_att_value
+			if radius_check_att
+				return total_sec.to_i > radius_check_att.value.to_i ? true : false
+			else
+				return false
+			end	
 		else
 			return false
 		end

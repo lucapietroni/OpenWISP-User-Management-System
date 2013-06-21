@@ -24,6 +24,12 @@
           <table>
             <tr>
               <td>
+                <% if flash[:error] %>
+                  <div class="clearb">&nbsp;</div>
+                  <div class="input string required field_with_errors">
+                    <div class="error"><%= flash[:error] %></div>
+                   </div> 
+                <% end %>                 
                 <%= form.input :product_id, :label => t("product") do %>
                 <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
     <% end %>

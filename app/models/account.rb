@@ -212,7 +212,7 @@ class Account < AccountCommon
 		cost = self.product.code.split("<")
     values.merge!({
                       #"amount_1" => self.product_idConfiguration.get("credit_card_verification_cost"),
-                      "amount_1" => (cost[0] unless cost.empty?),
+                      "amount_1" => (cost.empty? ? 0 : cost[0]),
                       "item_name_1" => I18n.t(:credit_card_item_name),
                       "item_number_1" => self.id,
                       "quantity_1" => 1

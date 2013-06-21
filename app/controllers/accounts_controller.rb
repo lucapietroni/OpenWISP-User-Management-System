@@ -60,9 +60,17 @@ class AccountsController < ApplicationController
 		#assign radius group to user
 		unless params[:account][:product_id].blank?
 			product = Product.find(params[:account][:product_id])
-			radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
-			if radius_group
-				@account.radius_groups << radius_group
+			@radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
+			if @radius_group
+				@account.radius_groups << @radius_group
+			else
+				flash[:error] = t("radius_group_not_found")
+	      respond_to do |format|
+	        format.html   { render :action => :new }
+	        format.mobile { render :action => :new }
+	        format.xml { render_if_xml_restful_enabled :xml => @account.errors, :status => :unprocessable_entity }
+	      end
+	      return				
 			end
 		end
 

@@ -29,6 +29,8 @@ class RadiusAccounting < ActiveRecord::Base
   alias_attribute :called_station_id, :CalledStationId
   alias_attribute :framed_ip_address, :FramedIPAddress
   alias_attribute :acct_session_time, :AcctSessionTime
+  alias_attribute :acct_start_time, :AcctStartTime
+  alias_attribute :acct_stop_time, :AcctStopTime
 
   # RadiusAccountings shouldn't be created/modified by Rails
   attr_accessible
