@@ -12,8 +12,8 @@ xml.account do
         end
       elsif @account.verification_method == Account::VERIFY_BY_CREDIT_CARD
         xml.paypal do
-          xml << link_to_paypal(image_tag("paypal.png"), :bill_to                      => @account)
-          # xml << encrypted_submit_to_paypal(image_submit_tag("paypal.png"), :bill_to => @account)
+          # xml << link_to_paypal(image_tag("paypal.png"), :bill_to => @account)
+          xml << encrypted_submit_to_paypal(image_submit_tag("paypal.png"), :bill_to => @account)
         end
       end
       xml.minutes_left @account.expire_time
