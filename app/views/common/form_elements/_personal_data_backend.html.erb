@@ -84,7 +84,7 @@
   </div>    
   
   <div class="grid_4">
-      <% if current_operator.is_admin? && @user.verify_with_document? %>
+      <% if @user.verify_with_document? %>
         <%= form.input :product_ids, :label => t("product") do %>
           <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.products.map {|j| j.product_id})), {}, {:multiple => true} %>
         <% end %>  
