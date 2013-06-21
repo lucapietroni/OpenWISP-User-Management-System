@@ -90,20 +90,24 @@ class AccountCommon < ActiveRecord::Base
             :format => {:with => /\A[0-9]+\Z/, :message => :mobile_suffix_format, :allow_blank => true}
 
   validates :given_name,
-            :presence => true
+            :presence => true,
+            :format => {:with => /\A(\w|[\àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
 
   validates :surname,
-            :presence => true
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'àèéìòù])+\Z/i, :message => :name_format, :allow_blank => true}
 
   validates :state,
             :presence => true,
             :format => {:with => /\A[a-z\s'\.,]+\Z/i, :message => :address_format}
 
   validates :city,
-            :presence => true
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
 
   validates :address,
-            :presence => true
+            :presence => true,
+            :format => {:with => /\A(\w|[\s'\.,\/\-àèéìòù])+\Z/i, :message => :address_format, :allow_blank => true}
 
   validates :zip,
             :presence => true,
