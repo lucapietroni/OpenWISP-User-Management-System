@@ -17,9 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #%>
 
-<% if is_radius_counters_reached? -%>
-  <%= render 'radius_counters_reached' %>
-<% else -%>
+<%# if is_radius_counters_reached? -%>
+  <%# render 'radius_counters_reached' %>
+<%# else %>
 
 <% content_for :after_defaults do %>
     <%= javascript_include_tag 'highcharts',
@@ -87,6 +87,10 @@
           <strong><%=t :Last_login_ip %></strong><br />
           <%= @account.last_login_ip %>
         </p>
+        <p>
+          <strong><%=t :remaining_time %></strong><br />
+          <span style="color: red; "><%= @account.last_login_ip %>
+        </p>
       </fieldset>
     </div>
   </div>
@@ -122,5 +126,5 @@
     </div>
   </div>
 </div>
-<% end -%>
+<%# end %>
 <div class="clear"></div>
