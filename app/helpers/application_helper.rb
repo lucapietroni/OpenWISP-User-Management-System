@@ -156,6 +156,33 @@ module ApplicationHelper
   end
   
   def is_radius_counters_reached?
+		rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
+		total_sec = 0
+		if rad_acc
+			rad_acc.each do |rad|
+				if rad.acct_stop_time and rad.acct_start_time
+					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
+				end	
+			end
+			radius_check_att = current_account.radius_groups.first.radius_checks.radius_check_att_value
+			if radius_check_att
+				if total_sec.to_i >= radius_check_att.value.to_i
+					current_account.verified = false
+					current_account.save
+					rad_acc.update_all(:is_surf => false)
+					return true
+				else
+					return false
+				end	
+			else
+				return false
+			end	
+		else
+			return false
+		end
+	end
+	
+	def remaining_time_to_surf
 		rad_acc = RadiusAccounting.where(:username => current_account.username)
 		total_sec = 0
 		if rad_acc
@@ -166,12 +193,12 @@ module ApplicationHelper
 			end
 			radius_check_att = current_account.radius_groups.first.radius_checks.radius_check_att_value
 			if radius_check_att
-				return total_sec.to_i > radius_check_att.value.to_i ? true : false
-			else
-				return false
-			end	
-		else
-			return false
+				if radius_check_att.value.to_i > total_sec.to_i
+					total = radius_check_att.value.to_i - total_sec.to_i
+					return Time.at(total).gmtime.strftime('%R:%S')
+				end
+			end
 		end
+		return "00:00:00"
 	end
 end
