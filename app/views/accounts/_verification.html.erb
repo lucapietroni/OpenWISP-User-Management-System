@@ -33,9 +33,13 @@
           <%=t :Free_call_description %><br />
           <br />
       <% elsif @account.verify_with_credit_card? %>
-          <%=t :Please_verify_credit_card %><br />
-          <%# link_to_paypal image_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>
-          <%= encrypted_submit_to_paypal image_submit_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>
+            <% unless @account.verified and @account.verified_at.nil? %>
+              <%= t("your_surfing_time_is_finished", username: @account.username) %><br />
+            <% else %>
+              <%=t :Please_verify_credit_card %><br />
+              <%# link_to_paypal image_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>
+              <%= encrypted_submit_to_paypal image_submit_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>              
+            <% end %>  
           <br /><br /><br />
       <% end %>
 

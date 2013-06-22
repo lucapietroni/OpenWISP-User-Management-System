@@ -158,7 +158,9 @@ module ApplicationHelper
   def is_radius_counters_reached?
 		rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
 		total_sec = 0
-		if rad_acc
+		puts rad_acc.inspect
+		puts 'sssssssssssssss'
+		if rad_acc.count > 0
 			rad_acc.each do |rad|
 				if rad.acct_stop_time and rad.acct_start_time
 					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
@@ -178,7 +180,7 @@ module ApplicationHelper
 				return false
 			end	
 		else
-			return false
+			return true
 		end
 	end
 	
