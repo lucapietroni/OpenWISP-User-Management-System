@@ -183,7 +183,7 @@
           <% if current_account %>
               <li><%= menu_link_to t(:Show_account_info), account_url %></li>
               <li><%= menu_link_to t(:Edit_account), edit_account_url %></li>
-              <% if is_radius_counters_reached? %>
+              <% unless current_account.has_credits %>
                 <li><%= menu_link_to t(:buy_new_product), buy_product_url %></li>
               <% end %>
               <li class="secondary"><%= link_to t(:Logout), account_logout_url, :method => :delete %></li>

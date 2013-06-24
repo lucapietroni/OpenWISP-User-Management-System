@@ -9,8 +9,8 @@
             <tr>
               <td>
                 <% if @verify == true %>
-                  <%# link_to_paypal image_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>
-                  <%= encrypted_submit_to_paypal image_submit_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>            
+                  <%= link_to_paypal image_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>
+                  <%#= encrypted_submit_to_paypal image_submit_tag("paypal.png"), :bill_to => @account, :target => '_blank' %>            
                 <% else %>
                     <%= simple_form_for @account, :url => buy_product_path, :method => "post" do |form| %>
                     <div class="grid_5">

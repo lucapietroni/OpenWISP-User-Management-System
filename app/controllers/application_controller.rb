@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
   helper_method :has_mobile?
   protect_from_forgery
 
-  before_filter :set_locale, :set_current_operator, :load_additional_exception_data
+  before_filter :set_locale, :set_current_operator, :load_additional_exception_data, :is_radius_counters_reached?
   after_filter :reset_last_captcha_code! # reset captcha code after each request for security
 
   # Additional gem/plugin functionality
@@ -185,5 +185,51 @@ class ApplicationController < ActionController::Base
   def subject_url(subject)
     subject.is_a?(User) ? user_url(subject) : radius_group_url(subject)
   end
+
+  def create_user_attribute_entry(account, radius_group, buy_new)
+  	user_max_all_session = account.radius_checks.user_check_att_value
+  	unless user_max_all_session
+  		attr = [:check_attribute => "Max-All-Session",
+  					  :op => ":=",
+  					  :value => radius_group.radius_checks.radius_check_att_value.value,
+  					  :radius_entity => account,
+  					  :radius_entity_type => "AccountCommon"]
+  		RadiusCheck.create(attr)
+  	else
+  		if buy_new
+  			total = user_max_all_session.value.to_i + radius_group.radius_checks.radius_check_att_value.value.to_i
+  			user_max_all_session.value = total
+  		else
+  			user_max_all_session.value = radius_group.radius_checks.radius_check_att_value.value.to_s
+  		end
+  		user_max_all_session.save
+  	end
+  end
+  
+  def is_radius_counters_reached?
+  	if current_account
+			rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
+			user_check_att = current_account.radius_checks.user_check_att_value
+			total_sec = 0
+			if rad_acc.count > 0
+				
+				rad_acc.each do |rad|
+					if rad.acct_stop_time and rad.acct_start_time
+						total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
+					end	
+				end
+				
+				if user_check_att
+					if total_sec.to_i >= user_check_att.value.to_i
+						current_account.has_credits = false
+						current_account.save
+						rad_acc.update_all(:is_surf => false)
+						user_check_att.destroy
+					end	
+				end
+				
+			end
+		end	
+	end  
 
 end

@@ -154,53 +154,29 @@ module ApplicationHelper
       link_to(@current_operator.login, root_url)
     end
   end
-  
-  def is_radius_counters_reached?
-		rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
+	
+	def remaining_time_to_surf
+		unless current_account.has_credits
+			return "00:00:00"
+		end
+		rad_acc = RadiusAccounting.where(:username => current_account.username)
+		user_check_att = current_account.radius_checks.user_check_att_value
 		total_sec = 0
-		puts rad_acc.inspect
-		puts 'sssssssssssssss'
 		if rad_acc.count > 0
 			rad_acc.each do |rad|
 				if rad.acct_stop_time and rad.acct_start_time
 					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
 				end	
 			end
-			radius_check_att = current_account.radius_groups.first.radius_checks.radius_check_att_value
-			if radius_check_att
-				if total_sec.to_i >= radius_check_att.value.to_i
-					current_account.verified = false
-					current_account.save
-					rad_acc.update_all(:is_surf => false)
-					return true
-				else
-					return false
-				end	
-			else
-				return false
-			end	
-		else
-			return true
-		end
-	end
-	
-	def remaining_time_to_surf
-		rad_acc = RadiusAccounting.where(:username => current_account.username)
-		total_sec = 0
-		if rad_acc
-			rad_acc.each do |rad|
-				if rad.acct_stop_time and rad.acct_start_time
-					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
-				end	
-			end
-			radius_check_att = current_account.radius_groups.first.radius_checks.radius_check_att_value
-			if radius_check_att
-				if radius_check_att.value.to_i > total_sec.to_i
-					total = radius_check_att.value.to_i - total_sec.to_i
+			if user_check_att
+				if user_check_att.value.to_i > total_sec.to_i
+					total = user_check_att.value.to_i - total_sec.to_i
 					return Time.at(total).gmtime.strftime('%R:%S')
 				end
 			end
+		else
+			return user_check_att ? Time.at(user_check_att.value.to_i).gmtime.strftime('%R:%S') : "00:00:00"		
 		end
-		return "00:00:00"
+		
 	end
 end

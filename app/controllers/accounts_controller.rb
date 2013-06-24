@@ -80,6 +80,7 @@ class AccountsController < ApplicationController
 
     if save_account
     	OperatorUser.create(:user_id => @account.id).save
+    	create_user_attribute_entry(@account, @radius_group, false)
       respond_to do |format|
         format.html { redirect_to account_path }
         format.mobile { redirect_to account_path }
@@ -265,6 +266,7 @@ class AccountsController < ApplicationController
 					@account.product_id = params[:account][:product_id]
 					@account.save
 					@verify = true
+					create_user_attribute_entry(@account, radius_group, true)
 				else
 					flash[:error] = t('radius_group_not_found')
 				end
