@@ -216,7 +216,6 @@ class User < AccountCommon
   def mobile_phone_identity_verify!
     if self.verify_with_mobile_phone?
       self.verified = true
-      self.has_credits = true
       self.save!
       self.new_account_notification!
     else
