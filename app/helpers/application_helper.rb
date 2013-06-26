@@ -159,15 +159,11 @@ module ApplicationHelper
 		unless current_account.has_credits
 			return "00:00:00"
 		end
-		rad_acc = RadiusAccounting.where(:username => current_account.username)
+		rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
 		user_check_att = current_account.radius_checks.user_check_att_value
 		total_sec = 0
 		if rad_acc.count > 0
-			rad_acc.each do |rad|
-				if rad.acct_stop_time and rad.acct_start_time
-					total_sec = total_sec + (rad.acct_stop_time.to_time - rad.acct_start_time.to_time).to_i
-				end	
-			end
+			total_sec = rad_acc.last.total_surfing_time
 			if user_check_att
 				if user_check_att.value.to_i > total_sec.to_i
 					total = user_check_att.value.to_i - total_sec.to_i

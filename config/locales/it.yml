@@ -326,6 +326,6 @@ it:
   product: "Product"      
   product_can_not_be_blank: "Product can't be blank"
   radius_group_not_found: "radius group not found"
-  your_surfing_time_is_finished: "Dear %{username}, your surfing time is finished, you can buy a new package to continue to surf."
+  your_surfing_time_is_finished: "Dear %{username}, you reached your limit, buy again."
   buy_new_product: "Buy new package"
   radius_group_not_found: "Radius group not found"  

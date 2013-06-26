@@ -31,6 +31,7 @@ class RadiusAccounting < ActiveRecord::Base
   alias_attribute :acct_session_time, :AcctSessionTime
   alias_attribute :acct_start_time, :AcctStartTime
   alias_attribute :acct_stop_time, :AcctStopTime
+  alias_attribute :total_surfing_time, :TotalSurfingTime
 
   # RadiusAccountings shouldn't be created/modified by Rails
   attr_accessible
