@@ -185,27 +185,7 @@ class ApplicationController < ActionController::Base
   def subject_url(subject)
     subject.is_a?(User) ? user_url(subject) : radius_group_url(subject)
   end
-
-  def create_user_attribute_entry(account, radius_group, buy_new)
-  	user_max_all_session = account.radius_checks.user_check_att_value
-  	unless user_max_all_session
-  		attr = [:check_attribute => "Max-All-Session",
-  					  :op => ":=",
-  					  :value => radius_group.radius_checks.radius_check_att_value.value,
-  					  :radius_entity => account,
-  					  :radius_entity_type => "AccountCommon"]
-  		RadiusCheck.create(attr)
-  	else
-  		if buy_new
-  			total = user_max_all_session.value.to_i + radius_group.radius_checks.radius_check_att_value.value.to_i
-  			user_max_all_session.value = total
-  		else
-  			user_max_all_session.value = radius_group.radius_checks.radius_check_att_value.value.to_s
-  		end
-  		user_max_all_session.save
-  	end
-  end
-  
+ 
   def is_radius_counters_reached?
   	if current_account
 			rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)

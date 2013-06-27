@@ -30,6 +30,9 @@ class AccountsController < ApplicationController
 
   protect_from_forgery :except => [ :verify_credit_card, :secure_verify_credit_card ]
 
+	# Set a filter that is invoked on every request  
+  before_filter :_set_current_session
+
   STATS_PERIOD = 14
 
   def new
@@ -61,16 +64,14 @@ class AccountsController < ApplicationController
 		unless params[:account][:product_id].blank?
 			product = Product.find(params[:account][:product_id])
 			@radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
-			if @radius_group
-				@account.radius_groups << @radius_group
-			else
+			if !@radius_group
 				flash[:error] = t("radius_group_not_found")
 	      respond_to do |format|
 	        format.html   { render :action => :new }
 	        format.mobile { render :action => :new }
 	        format.xml { render_if_xml_restful_enabled :xml => @account.errors, :status => :unprocessable_entity }
 	      end
-	      return				
+	      return
 			end
 		end
 
@@ -80,7 +81,8 @@ class AccountsController < ApplicationController
 
     if save_account
     	OperatorUser.create(:user_id => @account.id).save
-    	create_user_attribute_entry(@account, @radius_group, false)
+			session[:buy_radius_group_id] = @radius_group.id
+			session[:buy_product_id] = params[:account][:product_id]
       respond_to do |format|
         format.html { redirect_to account_path }
         format.mobile { redirect_to account_path }
@@ -230,6 +232,8 @@ class AccountsController < ApplicationController
       user = User.find params[:invoice]
 
       user.credit_card_identity_verify!
+    	session[:buy_radius_group_id] = nil
+    	session[:buy_product_id] = nil   
     end
     render :nothing => true
   end
@@ -245,6 +249,8 @@ class AccountsController < ApplicationController
         user = User.find params[:invoice]
 
         user.credit_card_identity_verify!
+      	session[:buy_radius_group_id] = nil
+      	session[:buy_product_id] = nil  
       end
     end
     render :nothing => true
@@ -262,11 +268,9 @@ class AccountsController < ApplicationController
 				product = Product.find(params[:account][:product_id])
 				radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
 				if radius_group
-					@account.radius_group_ids = [radius_group.id]
-					@account.product_id = params[:account][:product_id]
-					@account.save
+					session[:buy_radius_group_id] = radius_group.id
+					session[:buy_product_id] = params[:account][:product_id]
 					@verify = true
-					create_user_attribute_entry(@account, radius_group, true)
 				else
 					flash[:error] = t('radius_group_not_found')
 				end
@@ -305,4 +309,17 @@ class AccountsController < ApplicationController
     @total_accountings =  @account.radius_accountings.count
     @radius_accountings = @account.radius_accountings.order(sort).page(page).per(items_per_page)
   end
+  
+  protected
+  def _set_current_session
+    # Define an accessor. The session is always in the current controller
+    # instance in @_request.session. So we need a way to access this in
+    # our model
+    accessor = instance_variable_get(:@_request)
+
+    # This defines a method session in ActiveRecord::Base. If your model
+    # inherits from another Base Class (when using MongoMapper or similar),
+    # insert the class here.
+    ActiveRecord::Base.send(:define_method, "session", proc {accessor.session})
+  end  
 end

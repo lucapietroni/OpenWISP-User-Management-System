@@ -207,6 +207,13 @@ class User < AccountCommon
       self.verified = true
       self.has_credits = true
       self.save!
+      if session[:buy_radius_group_id]
+				self.radius_group_ids = [session[:buy_radius_group_id]]
+				self.product_id = session[:buy_product_id]
+				self.save!      	
+      	radius_group = RadiusGroup.find(session[:buy_radius_group_id])
+      	create_user_attribute_entry(self, radius_group)
+      end
       self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'credit_card'!")
@@ -273,6 +280,27 @@ class User < AccountCommon
   def recovered=(value)
     write_attribute(:recovered, value)
     self.recovered_at = Time.now()
+  end
+  
+  def create_user_attribute_entry(account, radius_group)
+  	user_max_all_session = account.radius_checks.user_check_att_value
+  	unless user_max_all_session
+  		attr = [:check_attribute => "Max-All-Session",
+  					  :op => ":=",
+  					  :value => radius_group.radius_checks.radius_check_att_value.value,
+  					  :radius_entity => account,
+  					  :radius_entity_type => "AccountCommon"]
+  		RadiusCheck.create(attr)
+  	else
+  		rg_att = radius_group.radius_checks.radius_check_att_value
+  		radius_group_att_value = 0
+  		if rg_att
+  			radius_group_att_value = rg_att.value.to_i
+  		end
+			total = user_max_all_session.value.to_i + radius_group_att_value
+			user_max_all_session.value = total
+			user_max_all_session.save
+  	end
   end
 
 end
