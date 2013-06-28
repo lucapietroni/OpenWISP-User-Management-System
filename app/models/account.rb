@@ -203,18 +203,19 @@ class Account < AccountCommon
         :cmd => '_cart',
         :upload => 1,
         :return => return_url,
-        :invoice => self.id,
+        :invoice => "#{self.id}.#{SecureRandom.hex(10)}",
         :notify_url => notify_url,
         :currency_code => "EUR",
         :lc => I18n.locale.to_s.upcase
     }
 
-		cost = self.product.code.split("<")
+		product = self.product
+		cost = product.code.split("<")
     values.merge!({
                       #"amount_1" => self.product_idConfiguration.get("credit_card_verification_cost"),
                       "amount_1" => (cost.empty? ? 0 : cost[0]),
-                      "item_name_1" => I18n.t(:credit_card_item_name),
-                      "item_number_1" => self.id,
+                      "item_name_1" => product.name,
+                      "item_number_1" => product.id,
                       "quantity_1" => 1
                   })
 

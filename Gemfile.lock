@@ -139,6 +139,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.37)
+    webget_ruby_secure_random (1.2.1)
     xml-simple (1.1.2)
 
 PLATFORMS
@@ -167,3 +168,4 @@ DEPENDENCIES
   rmagick (~> 2.12.2)
   robinboening-fleximage (~> 1.0.6)
   simple_form (~> 1.4.1)
+  webget_ruby_secure_random

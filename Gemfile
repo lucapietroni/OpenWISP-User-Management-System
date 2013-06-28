@@ -34,3 +34,5 @@ gem 'italian_job', :git=>'git://github.com/lucapette/italian_job'
 gem "iban-check", "~> 0.1.1"
 
 gem 'pdf-writer', :git => 'git://github.com/metaskills/pdf-writer.git'
+
+gem 'webget_ruby_secure_random'

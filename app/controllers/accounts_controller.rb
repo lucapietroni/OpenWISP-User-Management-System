@@ -229,7 +229,8 @@ class AccountsController < ApplicationController
     # clarity is preferred to geekiness :D
     # TODO: disable and delete this method
     if params.has_key? :invoice
-      user = User.find params[:invoice]
+    	invoice = params[:invoice].split(".")
+      user = User.find invoice[0].to_i
 
       user.credit_card_identity_verify!
     	session[:buy_radius_group_id] = nil
@@ -246,7 +247,8 @@ class AccountsController < ApplicationController
     # clarity is preferred to geekiness :D
     if params.has_key?(:secret) and params[:secret] == Configuration.get("ipn_shared_secret")
       if params.has_key? :invoice
-        user = User.find params[:invoice]
+	    	invoice = params[:invoice].split(".")
+	      user = User.find invoice[0].to_i
 
         user.credit_card_identity_verify!
       	session[:buy_radius_group_id] = nil
