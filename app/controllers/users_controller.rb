@@ -294,8 +294,9 @@ class UsersController < ApplicationController
 		
 		cpe= CpeTemplate.find(user.cpe_template_id);
 		template = cpe.template
-		template=template.gsub("<CPE_NAME>",user.inst_cpe_username)
+		template=template.gsub("<CPE_USERNAME>",user.inst_cpe_username)
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
+		template=template.gsub("<CPE_DEVNAME>",user.surname)
 		file_name = user.inst_cpe_username.to_s + "-" + cpe.name.to_s + ".txt"
 		tm = Time.now.to_s.gsub(/\s+/, "")
 		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")

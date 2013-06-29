@@ -1,0 +1,20 @@
+01:
+  id: 1
+  name: Promo 1 EUR per 1 ora
+  code: 1<1>
+  created_at: 2013-06-15 12:56:30
+  updated_at: 2013-06-28 13:47:09
+
+02:
+  id: 2
+  name: Promo 2 EUR per 3 ore
+  code: 2<3>
+  created_at: 2013-06-15 12:56:30
+  updated_at: 2013-06-28 13:47:09
+
+03:
+  id: 3
+  name: Promo 10 EUR per 24 ore
+  code: 10<24>
+  created_at: 2013-06-15 12:56:30
+  updated_at: 2013-06-28 13:47:09

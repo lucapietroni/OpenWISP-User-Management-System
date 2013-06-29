@@ -53,3 +53,31 @@ radius_replies_006:
   id: "6"
   value: Account Disabilitato - Account Disabled
   reply_attribute: Reply-Message
+radius_replies_007:
+  radius_entity_type: RadiusGroup
+  op: "="
+  radius_entity_id: "5"
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  id: "7"
+  value: "300"
+  reply_attribute: Idle-Timeout
+radius_replies_008:
+  radius_entity_type: RadiusGroup
+  op: "="
+  radius_entity_id: "6"
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  id: "8"
+  value: "300"
+  reply_attribute: Idle-Timeout
+radius_replies_009:
+  radius_entity_type: RadiusGroup
+  op: "="
+  radius_entity_id: "7"
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  id: "9"
+  value: "300"
+  reply_attribute: Idle-Timeout
+

@@ -23,3 +23,24 @@ radius_groups_001:
   updated_at: 2009-12-28 13:36:50
   priority: "1"
   id: "1"
+radius_groups_005:
+  name: 1hr
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  priority: "1"
+  id: "5"
+  notes: "<1>"
+radius_groups_006:
+  name: 3hrs
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  priority: "1"
+  id: "6"
+  notes: "<3>"
+radius_groups_007:
+  name: 24hrs    
+  created_at: 2009-12-28 13:36:50
+  updated_at: 2009-12-28 13:36:50
+  priority: "1"
+  id: "7"
+  notes: "<24>"
