@@ -86,7 +86,7 @@
   <div class="grid_4">
       <% if @user.verify_with_document? %>
         <%= form.input :product_ids, :label => t("product") do %>
-          <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.products.map {|j| j.product_id})), {}, {:multiple => true} %>
+          <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.products.map {|j| j.product_ids})), {}, {:multiple => true} %>
         <% end %>  
       <% else %>
         <%= form.input :product_id, :label => t("product") do %>

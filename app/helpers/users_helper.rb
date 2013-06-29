@@ -41,4 +41,24 @@ module UsersHelper
   def user_verification_select
     user_verification_methods.map{ |method| [ t(method.to_sym), method ] }
   end
+        def remaining_time_to_surf_operator_view
+		unless @user.has_credits
+			return "00:00:00"
+		end
+		rad_acc = RadiusAccounting.where(:username => @user.username, :is_surf => true)
+		user_check_att = @user.radius_checks.user_check_att_value
+		total_sec = 0
+		if rad_acc.count > 0
+			total_sec = rad_acc.last.total_surfing_time
+			if user_check_att
+				if user_check_att.value.to_i > total_sec.to_i
+					total = user_check_att.value.to_i - total_sec.to_i
+					return Time.at(total).gmtime.strftime('%R:%S')
+				end
+			end
+		else
+			return user_check_att ? Time.at(user_check_att.value.to_i).gmtime.strftime('%R:%S') : "00:00:00"		
+		end
+		
+	end
 end

@@ -62,8 +62,8 @@
         <tr>
           <th><%= t :Username %></th>
           <th>
-            <% if @user.verify_with_mobile_phone? %>
-                <%= t :Mobile_phone_number %>
+            <% if @user.verify_with_credit_card? %>
+                <%= t :remaining_time %>
             <% elsif @user.verify_with_document? %>
                 <%= t :Document_photo %>
             <% end %>
@@ -79,8 +79,8 @@
         <tr>
           <td><%= @user.username %></td>
           <td>
-            <% if @user.verify_with_mobile_phone? %>
-                <%= @user.mobile_phone %>
+            <% if @user.verify_with_credit_card? %>
+                <span style="color: red; "><%= remaining_time_to_surf_operator_view %></span>
             <% elsif @user.verify_with_document? %>
                 <%= document_of @user, :link => true %>
             <% end %>
