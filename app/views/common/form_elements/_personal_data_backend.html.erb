@@ -183,7 +183,7 @@
  
   <div class="grid_4">
     <%= form.input :cpe_template_id, :label => t("cpe_template") do %>
-      <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.all.collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)), :error => true %>
+      <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.where(:active => 1) {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)), :error => true %>
     <% end %>  
   </div>  
   <div class="grid_4">
