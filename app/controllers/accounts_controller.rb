@@ -272,6 +272,8 @@ class AccountsController < ApplicationController
 				if radius_group
 					session[:buy_radius_group_id] = radius_group.id
 					session[:buy_product_id] = params[:account][:product_id]
+					current_account.product_id = params[:account][:product_id]
+					current_account.save
 					@verify = true
 				else
 					flash[:error] = t('radius_group_not_found')

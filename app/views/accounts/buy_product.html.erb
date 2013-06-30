@@ -21,7 +21,7 @@
                          </div> 
                       <% end %>                       
                       <%= form.input :product_id, :label => t("product") do %>
-                        <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}) %>
+                        <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + get_product_data_frontend.collect {|r| [r.name, r.id]}) %>
                       <% end %>
                      </div> 
                      <div class="clearb"></div>

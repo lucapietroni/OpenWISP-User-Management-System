@@ -86,11 +86,11 @@
   <div class="grid_4">
       <% if @user.verify_with_document? %>
         <%= form.input :product_ids, :label => t("product") do %>
-          <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.products.map {|j| j.product_ids})), {}, {:multiple => true} %>
+          <%= form.select :product_ids, options_for_select([[t("select_product"), ""]] + get_product_data_backend.collect {|r| [r.name, r.id]}, (owner.product_ids)), {}, {:multiple => true} %>
         <% end %>  
       <% else %>
         <%= form.input :product_id, :label => t("product") do %>
-          <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + Product.all.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
+          <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + get_product_data_backend.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
         <% end %>  
       <% end %>  
   </div>    
@@ -183,7 +183,7 @@
  
   <div class="grid_4">
     <%= form.input :cpe_template_id, :label => t("cpe_template") do %>
-      <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.where(:active => 1) {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)), :error => true %>
+      <%= form.select :cpe_template_id, options_for_select([[t("select_cpe_template"), ""]] + CpeTemplate.where(:active => 1).collect {|r| [r.name, r.id]}, (owner.cpe_template_id unless owner.cpe_template_id.nil?)), :error => true %>
     <% end %>  
   </div>  
   <div class="grid_4">

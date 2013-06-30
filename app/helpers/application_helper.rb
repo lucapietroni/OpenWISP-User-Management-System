@@ -175,5 +175,12 @@ module ApplicationHelper
 		end
 		
 	end
-
+	
+	def get_product_data_backend
+		Product.where("code NOT LIKE ?", "%<%")
+	end
+	
+	def get_product_data_frontend 
+		Product.where("code LIKE ?", "%<%")
+	end	
 end
