@@ -50,6 +50,7 @@ class UsersController < ApplicationController
   def new
     @user = User.new(:eula_acceptance => true, :privacy_acceptance => true, :state => 'Italy', :verification_method => User.verification_methods.first)
     @user.verified = true
+    @user.has_credits = true
     @user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:default_radius_group))]
 
     @countries = Country.all
@@ -292,7 +293,7 @@ class UsersController < ApplicationController
   def createdownload
 	  user = User.find(params[:id])
 		
-		cpe= CpeTemplate.find(user.cpe_template_id);
+		cpe = CpeTemplate.find(user.cpe_template_id);
 		template = cpe.template
 		template=template.gsub("<CPE_USERNAME>",user.inst_cpe_username)
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
