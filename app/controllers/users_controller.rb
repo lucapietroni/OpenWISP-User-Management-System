@@ -75,12 +75,15 @@ class UsersController < ApplicationController
     @radius_groups = RadiusGroup.all
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
-		end		
+		end	
+			
     if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
-        @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+      @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
+    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]      
     	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
@@ -99,6 +102,8 @@ class UsersController < ApplicationController
     		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
         @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
+	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]        
     		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?
 	
@@ -151,6 +156,7 @@ class UsersController < ApplicationController
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
 		end	 
+		
     if @user.update_attributes(params[:user]) and check_iban_number(@user)
     	if current_operator.is_admin
 	    	operator_user = @user.operator_users.first
@@ -161,6 +167,8 @@ class UsersController < ApplicationController
 	    end	
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_password = @user.crypted_password
+    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
+    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]
     	@user.save(:validate=>false)
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
@@ -178,8 +186,9 @@ class UsersController < ApplicationController
 				@user.save(:validate=>false)
 				@user = User.find(@user.id)
 				@user.radius_group_ids = radius_group_ids
-				@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids] 
-				@user.save
+	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
+	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]				
+				@user.save(:validate=>false)
 	    	if current_operator.is_admin
 		    	operator_user = @user.operator_users.first
 		    	if operator_user
@@ -297,6 +306,16 @@ class UsersController < ApplicationController
 		template=template.gsub("<CPE_USERNAME>",user.inst_cpe_username)
 		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
 		template=template.gsub("<CPE_DEVNAME>",user.surname)
+		
+  	user_products = @user.products.where("products.code LIKE ?", "%[%")
+  	
+  	unless user_products.blank?
+  		product = user_products.first
+			product_value = product.code.gsub("[", "").gsub("]", "")
+			template=template.gsub("<CPE_TSHAPER_IN>",product_value)
+			template=template.gsub("<CPE_TSHAPER_OUT>",product_value)  		
+  	end
+		
 		file_name = user.inst_cpe_username.to_s + "-" + cpe.name.to_s + ".txt"
 		tm = Time.now.to_s.gsub(/\s+/, "")
 		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")

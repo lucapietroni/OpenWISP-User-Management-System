@@ -209,7 +209,7 @@ class User < AccountCommon
       self.save!
       if session[:buy_radius_group_id]
 				self.radius_group_ids = [session[:buy_radius_group_id]]
-				self.product_id = session[:buy_product_id]
+				self.product_ids = [session[:buy_product_id]]
 				self.save!      	
       	radius_group = RadiusGroup.find(session[:buy_radius_group_id])
       	create_user_attribute_entry(self, radius_group)

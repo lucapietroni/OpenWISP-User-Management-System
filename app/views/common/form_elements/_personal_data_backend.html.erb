@@ -90,8 +90,8 @@
         <% end %>  
       <% else %>
         <%= form.input :product_id, :label => t("product") do %>
-          <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + get_product_data_backend.collect {|r| [r.name, r.id]}, (owner.product_id unless owner.product_id.nil?)) %>
-        <% end %>  
+          <%= form.select :product_id, options_for_select([[t("select_product"), ""]] + get_product_data_backend.collect {|r| [r.name, r.id]}, (owner.product_ids)), {} %>
+        <% end %>
       <% end %>  
   </div>    
     <div class="clearb"></div>

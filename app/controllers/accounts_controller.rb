@@ -73,6 +73,7 @@ class AccountsController < ApplicationController
 	      end
 	      return
 			end
+			@account.product_ids = [params[:account][:product_id]]
 		end
 
     @account.captcha_verification = session[:captcha]
@@ -272,7 +273,7 @@ class AccountsController < ApplicationController
 				if radius_group
 					session[:buy_radius_group_id] = radius_group.id
 					session[:buy_product_id] = params[:account][:product_id]
-					current_account.product_id = params[:account][:product_id]
+					current_account.product_ids = [params[:account][:product_id]]
 					current_account.save
 					@verify = true
 				else
