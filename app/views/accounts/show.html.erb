@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #%>
 
-<% if !@account.has_credits %>
+<% if !@account.has_credits and @account.verify_with_credit_card? %>
   <%= render 'radius_counters_reached' %>
 <% end %>
 
@@ -88,8 +88,10 @@
           <%= @account.last_login_ip %>
         </p>
         <p>
+          <% if @account.verify_with_credit_card? %>
           <strong><%=t :remaining_time %></strong><br />
           <span style="color: red; "><%= remaining_time_to_surf %>
+          <% end %>
         </p>
       </fieldset>
     </div>
