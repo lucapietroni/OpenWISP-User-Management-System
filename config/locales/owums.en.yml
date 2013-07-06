@@ -97,6 +97,7 @@ en:
   Key: "Key"
   Last_login_at: "Last login at"
   Last_login_ip: "Last login from IP"
+  Last_login_mac: "Last login from MAC"
   Last_x_days_traffic_download:
     one: "Downloaded today"
     other: "Downloaded last %{count} days"

@@ -98,6 +98,7 @@ it:
   Key: "Chiave"
   Last_login_at: "Data ultimo accesso"
   Last_login_ip: "IP ultimo accesso"
+  Last_login_mac: "MAC Address ultimo accesso"
   Last_x_days_traffic_download:
     one: "Download odierni"
     other: "Download degli ultimi %{count} giorni"
