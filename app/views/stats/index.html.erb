@@ -26,7 +26,7 @@
     %>
 <% end %>
 
-<div class="grid_4">
+<div class="grid_4_stat">
   <div class="box">
     <h2><a href="#" id="toggle-registered_users_graph"><%= t(:Registered_users_daily) %></a></h2>
     <div class="block small_graph" id="registered_users_daily_graph">
@@ -35,7 +35,7 @@
   </div>
 </div>
 
-<div class="grid_4">
+<div class="grid_4_stat">
   <div class="box">
     <h2><a href="#" id="toggle-logins_graph"><%= t(:Logins) %></a></h2>
     <div class="block small_graph" id="logins_graph">
@@ -44,7 +44,7 @@
   </div>
 </div>
 
-<div class="grid_4">
+<div class="grid_4_stat">
   <div class="box">
     <h2><a href="#" id="toggle-traffic_graph"><%= t(:Traffic) %></a></h2>
     <div class="block small_graph" id="traffic_graph">
@@ -77,7 +77,7 @@
   </div>
 </div>
 
-<div class="grid_4">
+<div class="grid_4_stat">
   <div class="box">
     <h2>
       <%= link_to t(:Last_x_registered_users, :count => 5), stat_path('last_registered', :number => 5), :remote => true, :id => 'toggle-last_registered' %>

@@ -23,6 +23,7 @@
 .grid_2,
 .grid_3,
 .grid_4,
+.grid_4_stat,
 .grid_5,
 .grid_6,
 .grid_7,
@@ -94,7 +95,12 @@
 
 .container_12 .grid_4
 {
-	width: 300px;
+	width: 335px;
+}
+
+.container_12 .grid_4_stat
+{
+  width: 300px;
 }
 
 .container_12 .grid_5
