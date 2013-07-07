@@ -27,6 +27,7 @@ class RadiusAccounting < ActiveRecord::Base
   alias_attribute :acct_terminate_cause, :AcctTerminateCause
   alias_attribute :nas_ip_address, :NASIPAddress
   alias_attribute :called_station_id, :CalledStationId
+  alias_attribute :calling_station_id, :CallingStationId
   alias_attribute :framed_ip_address, :FramedIPAddress
   alias_attribute :acct_session_time, :AcctSessionTime
   alias_attribute :acct_start_time, :AcctStartTime

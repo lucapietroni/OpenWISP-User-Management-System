@@ -61,4 +61,19 @@ module UsersHelper
 		end
 		
 	end
+
+  def user_last_ip
+    rad_acc = RadiusAccounting.where(:username => @user.username)
+    if rad_acc.count > 0
+         last_ip = rad_acc.last.framed_ip_address
+    end
+  end
+
+  def user_last_mac
+    rad_acc = RadiusAccounting.where(:username => @user.username)
+    if rad_acc.count > 0
+          last_mac = rad_acc.last.calling_station_id
+    end
+  end
+
 end
