@@ -66,8 +66,10 @@ module UsersHelper
     rad_acc = RadiusAccounting.where(:username => @user.username)
     if rad_acc.count > 0
          last_ip = rad_acc.last.framed_ip_address
+         link_to(last_ip, "http://#{last_ip}", :target => "_blank")
     end
   end
+  
 
   def user_last_mac
     rad_acc = RadiusAccounting.where(:username => @user.username)
