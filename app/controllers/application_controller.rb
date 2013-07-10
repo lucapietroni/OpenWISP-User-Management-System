@@ -188,7 +188,7 @@ class ApplicationController < ActionController::Base
  
   def is_radius_counters_reached?
   	if current_account
-			rad_acc = RadiusAccounting.where(:username => current_account.username, :is_surf => true)
+			rad_acc = RadiusAccounting.where("username = ? and is_surf = ? and TotalSurfingTime != ?", current_account.username, true, 0)
 			user_check_att = current_account.radius_checks.user_check_att_value
 			total_sec = 0
 			if rad_acc.count > 0

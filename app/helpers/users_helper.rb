@@ -45,7 +45,7 @@ module UsersHelper
 		unless @user.has_credits
 			return "00:00:00"
 		end
-		rad_acc = RadiusAccounting.where(:username => @user.username, :is_surf => true)
+		rad_acc = RadiusAccounting.where("username = ? and is_surf = ? and TotalSurfingTime != ?", @user.username, true, 0)
 		user_check_att = @user.radius_checks.user_check_att_value
 		total_sec = 0
 		if rad_acc.count > 0
@@ -62,6 +62,18 @@ module UsersHelper
 		
 	end
 
+  def total_connection_time
+	rad_acc = RadiusAccounting.where("username = ? and is_surf = ? and TotalSurfingTime != ?", @user.username, true, 0)
+	total_sec = 0
+	if rad_acc.count > 0
+		total_sec = rad_acc.last.total_surfing_time
+                total = total_sec.to_i
+		return Time.at(total).gmtime.strftime('%R:%S')
+	else
+		return "00:00:00"		
+	end
+  end
+
   def user_last_ip
     rad_acc = RadiusAccounting.where(:username => @user.username)
     if rad_acc.count > 0
@@ -69,7 +81,6 @@ module UsersHelper
          link_to(last_ip, "http://#{last_ip}", :target => "_blank")
     end
   end
-  
 
   def user_last_mac
     rad_acc = RadiusAccounting.where(:username => @user.username)
