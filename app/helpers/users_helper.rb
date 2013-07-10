@@ -63,15 +63,15 @@ module UsersHelper
 	end
 
   def total_connection_time
-	rad_acc = RadiusAccounting.where("username = ? and is_surf = ? and TotalSurfingTime != ?", @user.username, true, 0)
-	total_sec = 0
-	if rad_acc.count > 0
-		total_sec = rad_acc.last.total_surfing_time
+        rad_acc = RadiusAccounting.where("username = ? and is_surf = ? and TotalSurfingTime != ?", @user.username, true, 0)
+        total_sec = 0
+        if rad_acc.count > 0
+                total_sec = rad_acc.last.total_surfing_time
                 total = total_sec.to_i
-		return Time.at(total).gmtime.strftime('%R:%S')
-	else
-		return "00:00:00"		
-	end
+                return Time.at(total).gmtime.strftime('%R:%S')
+        else
+                return "00:00:00"		
+        end
   end
 
   def user_last_ip
