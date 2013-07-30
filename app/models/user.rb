@@ -202,19 +202,21 @@ class User < AccountCommon
     end
   end
 
-  def credit_card_identity_verify!
+  def credit_card_identity_verify!(buy_product_id, buy_radius_group_id)
     if self.verify_with_credit_card?
       self.verified = true
       self.has_credits = true
-      self.save!
-      if session[:buy_radius_group_id]
-				self.radius_group_ids = [session[:buy_radius_group_id]]
-				self.product_ids = [session[:buy_product_id]]
-				self.save!      	
-      	radius_group = RadiusGroup.find(session[:buy_radius_group_id])
+#      self.save!
+      self.save(:validate => false)
+#      if session[:buy_radius_group_id]
+      if buy_radius_group_id
+				self.radius_group_ids = [buy_radius_group_id]
+				self.product_ids = [buy_product_id]
+				self.save(:validate => false)
+      	radius_group = RadiusGroup.find(buy_radius_group_id)
       	create_user_attribute_entry(self, radius_group)
       end
-      self.new_account_notification!
+#      self.new_account_notification!
     else
       Rails.logger.error("Verification method is not 'credit_card'!")
     end

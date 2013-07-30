@@ -233,9 +233,9 @@ class AccountsController < ApplicationController
     	invoice = params[:invoice].split(".")
       user = User.find invoice[0].to_i
 
-      user.credit_card_identity_verify!
-    	session[:buy_radius_group_id] = nil
-    	session[:buy_product_id] = nil   
+      user.credit_card_identity_verify!(session[:buy_radius_group_id], session[:buy_product_id])
+#    	session[:buy_radius_group_id] = nil
+#    	session[:buy_product_id] = nil   
     end
     render :nothing => true
   end
@@ -251,9 +251,9 @@ class AccountsController < ApplicationController
 	    	invoice = params[:invoice].split(".")
 	      user = User.find invoice[0].to_i
 
-        user.credit_card_identity_verify!
-      	session[:buy_radius_group_id] = nil
-      	session[:buy_product_id] = nil  
+        user.credit_card_identity_verify!(session[:buy_radius_group_id], session[:buy_product_id])
+#      	session[:buy_radius_group_id] = nil
+#      	session[:buy_product_id] = nil  
       end
     end
     render :nothing => true

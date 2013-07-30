@@ -68,7 +68,7 @@ module UsersHelper
         if rad_acc.count > 0
                 total_sec = rad_acc.last.total_surfing_time
                 total = total_sec.to_i
-                return Time.at(total).gmtime.strftime('%R:%S')
+                return Time.at(total).gmtime.strftime('%Y-%m-%d %H:%M:%S')
         else
                 return "00:00:00"		
         end
