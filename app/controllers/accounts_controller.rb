@@ -17,11 +17,11 @@
 
 class AccountsController < ApplicationController
   before_filter :require_account, :only => [
-      :show, :edit, :update
+      :show, :edit, :update, :verify_credit_card, :secure_verify_credit_card
   ]
 
   before_filter :require_no_account, :only => [
-      :new, :create, :verify_credit_card, :secure_verify_credit_card
+      :new, :create
   ]
 
   before_filter :require_no_operator
@@ -82,8 +82,11 @@ class AccountsController < ApplicationController
 
     if save_account
     	OperatorUser.create(:user_id => @account.id).save
+    	
+    	#store radius group and product in session
 			session[:buy_radius_group_id] = @radius_group.id
 			session[:buy_product_id] = params[:account][:product_id]
+
       respond_to do |format|
         format.html { redirect_to account_path }
         format.mobile { redirect_to account_path }
@@ -232,10 +235,9 @@ class AccountsController < ApplicationController
     if params.has_key? :invoice
     	invoice = params[:invoice].split(".")
       user = User.find invoice[0].to_i
-
       user.credit_card_identity_verify!(session[:buy_product_id], session[:buy_radius_group_id])
-#    	session[:buy_radius_group_id] = nil
-#    	session[:buy_product_id] = nil   
+      #set session to nil
+    	session[:buy_radius_group_id] = session[:buy_product_id] = nil
     end
     render :nothing => true
   end
@@ -248,12 +250,11 @@ class AccountsController < ApplicationController
     # clarity is preferred to geekiness :D
     if params.has_key?(:secret) and params[:secret] == Configuration.get("ipn_shared_secret")
       if params.has_key? :invoice
-	    	invoice = params[:invoice].split(".")
-	      user = User.find invoice[0].to_i
-
+        invoice = params[:invoice].split(".")
+        user = User.find invoice[0].to_i
         user.credit_card_identity_verify!(session[:buy_product_id], session[:buy_radius_group_id])
-#      	session[:buy_radius_group_id] = nil
-#      	session[:buy_product_id] = nil  
+        #set session to nil
+        session[:buy_radius_group_id] = session[:buy_product_id] = nil
       end
     end
     render :nothing => true
@@ -271,10 +272,9 @@ class AccountsController < ApplicationController
 				product = Product.find(params[:account][:product_id])
 				radius_group = RadiusGroup.search(product.code[/\<(.*?)>/,1])
 				if radius_group
+				  #store radius group and product in session
 					session[:buy_radius_group_id] = radius_group.id
 					session[:buy_product_id] = params[:account][:product_id]
-					current_account.product_ids = [params[:account][:product_id]]
-					current_account.save
 					@verify = true
 				else
 					flash[:error] = t('radius_group_not_found')
