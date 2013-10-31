@@ -17,11 +17,11 @@
 
 class AccountsController < ApplicationController
   before_filter :require_account, :only => [
-      :show, :edit, :update, :verify_credit_card, :secure_verify_credit_card
-  ]
+      :show, :edit, :update
+ ]
 
   before_filter :require_no_account, :only => [
-      :new, :create
+      :new, :create, :verify_credit_card, :secure_verify_credit_card
   ]
 
   before_filter :require_no_operator
@@ -248,7 +248,7 @@ class AccountsController < ApplicationController
     # I know this method is verbose but, since 
     # it is very important for it to be secure,
     # clarity is preferred to geekiness :D
-    if params.has_key?(:secret) and params[:secret] == Configuration.get("ipn_shared_secret")
+#    if params.has_key?(:secret) and params[:secret] == Configuration.get("ipn_shared_secret")
       if params.has_key? :invoice
         invoice = params[:invoice].split(".")
         user = User.find invoice[0].to_i
@@ -256,7 +256,7 @@ class AccountsController < ApplicationController
         #set session to nil
         session[:buy_radius_group_id] = session[:buy_product_id] = nil
       end
-    end
+ #   end
     render :nothing => true
   end
 

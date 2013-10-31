@@ -21,6 +21,7 @@ class UsersController < ApplicationController
   require 'pdf/writer'
   require 'pdf/simpletable'	
   require 'tempfile'
+  require 'net/scp'
   before_filter :require_operator
   before_filter :load_user, :except => [:index, :new, :create, :search, :find]
   skip_before_filter :set_mobile_format
@@ -30,7 +31,7 @@ class UsersController < ApplicationController
 
     allow :users_browser, :to => [:index, :show, :createdownload, :createPDF]
     allow :users_registrant, :to => [:new, :create, :createdownload, :createPDF]
-    allow :users_manager, :to => [:new, :create, :edit, :update, :createdownload, :createPDF]
+    allow :users_manager, :to => [:new, :create, :edit, :update, :createdownload, :createPDF, :uploadcpeconf]
     allow :users_destroyer, :to => [:destroy]
     allow :users_finder, :to => [:find, :search, :show, :createdownload, :createPDF]
   end
@@ -90,6 +91,9 @@ class UsersController < ApplicationController
       # Associate user with the operator the current operator
       current_operator.has_role!('user_manager', @user)
 			create_user_role(@user.id)
+	if @user.verification_method == 'identity_document'
+     	 uploadcpeconf
+	end
       respond_to do |format|
         format.html { render :ticket }
         format.xml { render :xml => @user, :status => :created }
@@ -109,7 +113,10 @@ class UsersController < ApplicationController
 	
 	      # Associate user with the operator the current operator
 	      current_operator.has_role!('user_manager', @user)
-				create_user_role(@user.id)				
+				create_user_role(@user.id)
+		if @user.verification_method == 'identity_document'
+     		 uploadcpeconf
+		end
 	      respond_to do |format|
 	        format.html { render :ticket }
 	        format.xml { render :xml => @user, :status => :created }
@@ -169,10 +176,12 @@ class UsersController < ApplicationController
     	@user.inst_cpe_password = @user.crypted_password
     	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
     	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]
-    	@user.save(:validate=>false)
+        @user.save(:validate=>false)
       current_account_session.destroy unless current_account_session.nil?
       flash[:notice] = I18n.t(:Account_updated)
-
+	if @user.verification_method == 'identity_document'
+     	 uploadcpeconf
+	end
       respond_to do |format|
         format.html { redirect_to user_url }
         format.xml { render :nothing => true, :status => :ok }
@@ -197,7 +206,10 @@ class UsersController < ApplicationController
 		    	end
 		    end	
 	      current_account_session.destroy unless current_account_session.nil?
-	      flash[:notice] = I18n.t(:Account_updated)				
+	      flash[:notice] = I18n.t(:Account_updated)
+	if @user.verification_method == 'identity_document'
+     	 uploadcpeconf
+	end
 	      respond_to do |format|
 	        format.html { redirect_to user_url }
 	        format.xml { render :nothing => true, :status => :ok }
@@ -325,7 +337,38 @@ class UsersController < ApplicationController
 		send_file t.path, :type => 'text/plain; charset=utf-8',
 	                             :disposition => 'attachment',
 	                             :filename => file_name
-	end
+  end
+
+  def uploadcpeconf
+	user = User.find(@user.id)
+
+		cpe = CpeTemplate.find(user.cpe_template_id);
+		template = cpe.template
+		template=template.gsub("<CPE_USERNAME>",user.inst_cpe_username)
+		template=template.gsub("<CPE_PASSWORD>",user.inst_cpe_password)
+		template=template.gsub("<CPE_DEVNAME>",user.surname)
+		
+  	user_products = @user.products.where("products.code LIKE ?", "%[%")
+  	
+  	unless user_products.blank?
+  		product = user_products.first
+			product_value = product.code.gsub("[", "").gsub("]", "")
+			template=template.gsub("<CPE_TSHAPER_IN>",product_value)
+			template=template.gsub("<CPE_TSHAPER_OUT>",product_value)  		
+  	end
+		
+		file_name = user.inst_cpe_mac + ".cfg"
+		tm = Time.now.to_s.gsub(/\s+/, "")
+		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")
+		t.write(template)
+		t.close
+		File.rename(t.path,"/tmp/#{file_name}")
+		File.chmod(0644,"/tmp/#{file_name}")
+		Net::SCP.upload!(Configuration.get('repo_address'),
+			Configuration.get('repo_ssh_user'), "/tmp/#{file_name}",
+			Configuration.get('repo_path'))
+		File.delete("/tmp/#{file_name}")
+  end
 
   def createPDF
   	user = User.find(params[:id])

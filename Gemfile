@@ -36,3 +36,4 @@ gem "iban-check", "~> 0.1.1"
 gem 'pdf-writer', :git => 'git://github.com/metaskills/pdf-writer.git'
 
 gem 'webget_ruby_secure_random'
+gem "net-scp", "~> 1.1.2"

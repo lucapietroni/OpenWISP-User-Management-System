@@ -193,6 +193,21 @@ Se continui ad avere problemi per il reset della password, per piacere contattac
   key: "captcha_enabled"
   value: "true"
 
+72:
+  system_key: f
+  key: "repo_address"
+  value: "downloads.meshcom.it"
+
+73:
+  system_key: f
+  key: "repo_ssh_user"
+  value: "luca1"
+
+74:
+  system_key: f
+  key: "repo_path"
+  value: "/var/www/clients/client1/web6/web/downloads/configfiles"
+
 80:
   system_key: f
   key: "account_notification_message_en"
