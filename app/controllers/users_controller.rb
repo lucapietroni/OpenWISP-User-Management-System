@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
     allow :users_browser, :to => [:index, :show, :createdownload, :createPDF]
     allow :users_registrant, :to => [:new, :create, :createdownload, :createPDF]
-    allow :users_manager, :to => [:new, :create, :edit, :update, :createdownload, :createPDF, :uploadcpeconf]
+    allow :users_manager, :to => [:new, :create, :edit, :update, :createdownload, :createPDF]
     allow :users_destroyer, :to => [:destroy]
     allow :users_finder, :to => [:find, :search, :show, :createdownload, :createPDF]
   end
@@ -358,6 +358,7 @@ class UsersController < ApplicationController
   	end
 		
 		file_name = user.inst_cpe_mac + ".cfg"
+		file_name = file_name.gsub(/\:/, "")
 		tm = Time.now.to_s.gsub(/\s+/, "")
 		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")
 		t.write(template)

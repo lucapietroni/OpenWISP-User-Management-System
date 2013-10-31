@@ -33,7 +33,6 @@ Owums::Application.routes.draw do
   
   match '/createdownload/:id' => 'users#createdownload', :as => :createdownload
   match '/createPDF/:id' => 'users#createPDF', :as => :createPDF
-  match '/uploadcpeconf/:id' => 'users#uploadcpeconf', :as => :uploadcpeconf
 
   match '/mobile_phone_password_resets/:id/recovery_confirmation' => 'mobile_phone_password_resets#recovery_confirmation', :as => :recovery_confirmation
 
