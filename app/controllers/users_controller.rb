@@ -363,12 +363,12 @@ class UsersController < ApplicationController
 		t = Tempfile.new("tmp-cpe_configuration_file-#{tm.to_s}")
 		t.write(template)
 		t.close
-		File.rename(t.path,"/tmp/#{file_name}")
-		File.chmod(0644,"/tmp/#{file_name}")
+		File.rename(t.path,"/tmp/#{file_name}".downcase)
+		File.chmod(0644,"/tmp/#{file_name}".downcase)
 		Net::SCP.upload!(Configuration.get('repo_address'),
-			Configuration.get('repo_ssh_user'), "/tmp/#{file_name}",
+			Configuration.get('repo_ssh_user'), "/tmp/#{file_name}".downcase,
 			Configuration.get('repo_path'))
-		File.delete("/tmp/#{file_name}")
+		File.delete("/tmp/#{file_name}".downcase)
   end
 
   def createPDF
