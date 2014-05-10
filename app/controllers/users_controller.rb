@@ -80,7 +80,7 @@ class UsersController < ApplicationController
 			
     if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
-    	@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
+    	@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
       @user.username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
@@ -103,7 +103,7 @@ class UsersController < ApplicationController
     	check_iban_number(@user)
     	if @user.errors.empty?
 				@user.attributes = params[:user]
-    		@user.inst_cpe_username = @user.given_name.to_s + @user.surname.to_s
+    		@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
         @user.username = @user.given_name.to_s + "." + @user.surname.to_s
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
