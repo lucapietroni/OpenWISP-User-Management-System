@@ -168,7 +168,7 @@ it:
         zip_format: "non è corretto"
         eula_must_be_accepted: "devono essere accettate"
         privacy_must_be_accepted: "deve essere accettata"
-        mac_format: "esempio 00:80:C8:E9:8B:01"
+        mac_format: "esempio 0080C8E98B01"
 
     # Translate model names. Used in Model.human_name().
     models:

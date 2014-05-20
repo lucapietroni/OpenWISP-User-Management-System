@@ -66,8 +66,8 @@ class User < AccountCommon
 
   validates :inst_cpe_mac, :if => :verify_with_document?,
             :presence => true,
-            :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
-
+#            :format => {:with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
+            :format => {:with => /^([0-9a-fA-F]{2}){5}[0-9a-fA-F]{2}$/i, :message => :mac_format, :allow_blank => true}
   
   has_many :radius_replies, :as => :radius_entity, :dependent => :destroy
   has_many :operator_users, :dependent => :destroy
