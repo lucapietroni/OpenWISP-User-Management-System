@@ -77,14 +77,16 @@ class UsersController < ApplicationController
     @radius_groups = RadiusGroup.all
 		if params[:user][:is_company] == '0'		
 			@user.errors.delete(:pg_partita_iva)
-		end		
+		end
+		
+    @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+		
     if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
-      @user.username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
-    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]      
+    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]   
     	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
@@ -102,10 +104,9 @@ class UsersController < ApplicationController
     	update_validation_errors(@user)
     	check_iban_number(@user)
     	if @user.errors.empty?
-				@user.attributes = params[:user]
+		@user.attributes = params[:user]
     		@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
     		@user.inst_cpe_password = @user.crypted_password.to_s
-        @user.username = @user.given_name.to_s + "." + @user.surname.to_s
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
 	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]        
     		@user.save(:validate=>false)				
