@@ -162,7 +162,7 @@ class UsersController < ApplicationController
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
     pg_partita_iva_tmp = params[:user][:pg_partita_iva]
-		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]
+		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva]
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
 		end	 
