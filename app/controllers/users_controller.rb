@@ -60,11 +60,12 @@ class UsersController < ApplicationController
 
   def create
     
-    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
-		params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva][2..20]    
- 
+   pg_partita_iva_tmp = params[:user][:pg_partita_iva]
+   params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva]
+   
     @user = User.new(params[:user])
-		check_iban_number(@user)
+    verify_number =  check_iban_number(@user)
+	
     # Parameter anti-tampering
     unless current_operator.has_role? 'users_manager'
       @user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:default_radius_group))]
@@ -74,10 +75,9 @@ class UsersController < ApplicationController
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		if params[:user][:is_company] == '0'
+		if params[:user][:is_company] == '0'		
 			@user.errors.delete(:pg_partita_iva)
-		end	
-			
+		end		
     if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s

@@ -115,3 +115,4 @@ en:
   your_surfing_time_is_finished: "Dear %{username}, you reached your limit, buy again."
   buy_new_product: "Buy new package"
   radius_group_not_found: "Radius group not found"
+  pg_partita_format: "Have to be numeric and eleven-figure"

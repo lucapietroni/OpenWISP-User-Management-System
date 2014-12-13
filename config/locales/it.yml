@@ -165,6 +165,7 @@ it:
         mobile_suffix_format: "deve contenere solo numeri"
         name_format: "può contenere solo caratteri alfabetici ed i caratteri ''', '.' e ','"
         address_format: "può contenere solo numeri, lettere  ed i caratteri ''', '.' e ','"
+        pg_partita_format: "Deve essere numerica e di 11 cifre"
         zip_format: "non è corretto"
         eula_must_be_accepted: "devono essere accettate"
         privacy_must_be_accepted: "deve essere accettata"

@@ -38,7 +38,10 @@ class User < AccountCommon
   # Validations
   validate :verification_method_inclusion
   validates :pf_cf, :if => :verify_with_document?, :codice_fiscale_format => true, :presence => true
-  validates :pg_partita_iva, :partita_iva_format => true
+  validates :pg_partita_iva, :if => :is_company?,
+	:presence => true,
+	:format => {:with => /\A[0-9]{11}\Z/i, :message => :pg_partita_format, :allow_blank => true}
+ 
   
   validates :iban, :if => :verify_with_document?, :presence => true
   validates :product_ids, :if => :verify_with_document?, :presence => true
