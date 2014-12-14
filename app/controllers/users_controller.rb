@@ -79,14 +79,14 @@ class UsersController < ApplicationController
 			@user.errors.delete(:pg_partita_iva)
 		end
 		
-    @user.username = @user.given_name.to_s + "." + @user.surname.to_s
+    @user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
 	
 	
 	 if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
-    	@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
+    	@user.inst_cpe_username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
     	@user.inst_cpe_password = @user.crypted_password.to_s
-    	@user.username = @user.given_name.to_s + "." + @user.surname.to_s
+    	@user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
     	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
     	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]  
     	@user.mobile_prefix = params[:user][:mobile_prefix]
@@ -109,13 +109,13 @@ class UsersController < ApplicationController
     	check_iban_number(@user)
     	if @user.errors.empty?
 		@user.attributes = params[:user]
-    		@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
+    		@user.inst_cpe_username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
     		@user.inst_cpe_password = @user.crypted_password.to_s
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
 	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id] 
 	    	@user.mobile_prefix = params[:user][:mobile_prefix]
     		@user.mobile_suffix = params[:user][:mobile_suffix]
-	    	@user.username = @user.given_name.to_s + "." + @user.surname.to_s       
+	    	@user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")      
     		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?
 	
@@ -292,7 +292,7 @@ class UsersController < ApplicationController
 	params[:user][:pg_comune] = params[:user][:pg_comune].to_s.capitalize
   	params[:user][:city] = params[:user][:city].to_s.capitalize
   	params[:user][:given_name] = params[:user][:given_name].to_s.capitalize
-  	params[:user][:surname] = params[:user][:surname].to_s.capitalize
+  	params[:user][:surname] = params[:user][:surname].to_s.titleize
   	params[:user][:address] = params[:user][:address].to_s.titleize
   	params[:user][:pg_indirizzo] = params[:user][:pg_indirizzo].to_s.titleize
   end
