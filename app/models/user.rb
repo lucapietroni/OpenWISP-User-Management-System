@@ -25,12 +25,19 @@ class User < AccountCommon
 
 
   self.before_validation do |record|
+	record.pf_luogo_di_nascita = record.pf_luogo_di_nascita.to_s.capitalize
+	record.pg_comune = record.pg_comune.to_s.capitalize
+  	record.city= record.city.to_s.capitalize
+  	record.given_name = record.given_name.to_s.capitalize
+  	record.surname = record.surname.to_s.capitalize
+  	record.address = record.address.to_s.titleize
+  	record.pg_indirizzo = record.pg_indirizzo.to_s.titleize
     # Cleaning up unused fields... just in case..
     if record.verify_with_document?
-    #  record.mobile_prefix = nil
-    #  record.mobile_suffix = nil
+	    #  record.mobile_prefix = nil
+	    #  record.mobile_suffix = nil
     elsif record.verify_with_mobile_phone?
-      record.image_file_data = nil
+       record.image_file_data = nil
     end
   end
 
@@ -137,6 +144,8 @@ class User < AccountCommon
 
     ret
   end
+  
+
 
   def self.find_all_by_user_phone_or_mail(query)
     where(["username = ? OR CONCAT(mobile_prefix,mobile_suffix) = ? OR email = ?"] + [query]*3)

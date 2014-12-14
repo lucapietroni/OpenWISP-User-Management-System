@@ -59,7 +59,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    
+   format_field
    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
    params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva]
 
@@ -80,8 +80,9 @@ class UsersController < ApplicationController
 		end
 		
     @user.username = @user.given_name.to_s + "." + @user.surname.to_s
-		
-    if @user.save and verify_number
+	
+	
+	 if @user.save and verify_number
     	@user.pg_partita_iva = pg_partita_iva_tmp
     	@user.inst_cpe_username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.inst_cpe_password = @user.crypted_password.to_s
@@ -156,6 +157,7 @@ class UsersController < ApplicationController
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
   end
+
 
   def update
     # Parameter anti-tampering
@@ -284,6 +286,18 @@ class UsersController < ApplicationController
 		end	
 	end
 
+
+  def format_field
+  	params[:user][:pf_luogo_di_nascita] = params[:user][:pf_luogo_di_nascita].to_s.capitalize
+	params[:user][:pg_comune] = params[:user][:pg_comune].to_s.capitalize
+  	params[:user][:city] = params[:user][:city].to_s.capitalize
+  	params[:user][:given_name] = params[:user][:given_name].to_s.capitalize
+  	params[:user][:surname] = params[:user][:surname].to_s.capitalize
+  	params[:user][:address] = params[:user][:address].to_s.titleize
+  	params[:user][:pg_indirizzo] = params[:user][:pg_indirizzo].to_s.titleize
+  end
+
+
   def find
     if params[:user] && params[:user][:query]
       query = params[:user][:query]
@@ -345,6 +359,7 @@ class UsersController < ApplicationController
 	                             :disposition => 'attachment',
 	                             :filename => file_name
   end
+
 
   def uploadcpeconf
 	user = User.find(@user.id)
