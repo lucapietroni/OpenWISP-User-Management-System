@@ -96,7 +96,9 @@
   </div>    
     <div class="clearb"></div>
   <div class="grid_4">
-	<%= form.input :mobile_prefix %>
+    <%= form.input :mobile_prefix, :label => t("mobile_prefix") do %>
+      <%= form.select :mobile_prefix, options_for_select(@mobile_prefixes.map { |m| [ m.prefix, m.prefix.to_s ] }, (owner.mobile_prefix)), :error => true %>
+  <% end %>   
   </div>  
   <div class="grid_4">
 	<%= form.input :mobile_suffix %>
