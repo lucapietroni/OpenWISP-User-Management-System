@@ -116,3 +116,4 @@ en:
   buy_new_product: "Buy new package"
   radius_group_not_found: "Radius group not found"
   pg_partita_format: "Have to be numeric and eleven-figure"
+  m_prefix_format: "Have to be numeric and two or three-figure"

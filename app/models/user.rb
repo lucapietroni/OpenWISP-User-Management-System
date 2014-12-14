@@ -27,8 +27,8 @@ class User < AccountCommon
   self.before_validation do |record|
     # Cleaning up unused fields... just in case..
     if record.verify_with_document?
-      record.mobile_prefix = nil
-      record.mobile_suffix = nil
+    #  record.mobile_prefix = nil
+    #  record.mobile_suffix = nil
     elsif record.verify_with_mobile_phone?
       record.image_file_data = nil
     end
@@ -46,6 +46,14 @@ class User < AccountCommon
   validates :iban, :if => :verify_with_document?, :presence => true
   validates :product_ids, :if => :verify_with_document?, :presence => true
   validates :cpe_template_id, :if => :verify_with_document?, :presence => true
+  
+  validates :mobile_prefix, :if => :verify_with_document?,
+            :presence => true,
+            :format => {:with => /\A[0-9]{2,3}\Z/i, :message => :m_prefix_format, :allow_blank => true}
+            
+  validates :mobile_suffix, :if => :verify_with_document?,
+            :presence => true,
+            :format => {:with => /\A[0-9]{4,8}\Z/i, :message => :m_suffix_format, :allow_blank => true}
 
   validates :pf_luogo_di_nascita, :if => :verify_with_document?,
             :presence => true,

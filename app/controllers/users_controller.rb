@@ -62,7 +62,7 @@ class UsersController < ApplicationController
     
    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
    params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva]
-   
+
     @user = User.new(params[:user])
     verify_number =  check_iban_number(@user)
 	
@@ -87,7 +87,9 @@ class UsersController < ApplicationController
     	@user.inst_cpe_password = @user.crypted_password.to_s
     	@user.username = @user.given_name.to_s + "." + @user.surname.to_s
     	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
-    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]   
+    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]  
+    	@user.mobile_prefix = params[:user][:mobile_prefix]
+    	@user.mobile_suffix = params[:user][:mobile_suffix]
     	@user.save(:validate=>false)    	
       current_account_session.destroy unless current_account_session.nil?
 
@@ -110,6 +112,8 @@ class UsersController < ApplicationController
     		@user.inst_cpe_password = @user.crypted_password.to_s
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
 	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id] 
+	    	@user.mobile_prefix = params[:user][:mobile_prefix]
+    		@user.mobile_suffix = params[:user][:mobile_suffix]
 	    	@user.username = @user.given_name.to_s + "." + @user.surname.to_s       
     		@user.save(:validate=>false)				
 	      current_account_session.destroy unless current_account_session.nil?

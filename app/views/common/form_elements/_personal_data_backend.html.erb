@@ -95,11 +95,15 @@
       <% end %>  
   </div>    
     <div class="clearb"></div>
-    
+  <div class="grid_4">
+	<%= form.input :mobile_prefix %>
+  </div>  
+  <div class="grid_4">
+	<%= form.input :mobile_suffix %>
+  </div> 
   <div class="grid_4">   
     <%= form.input :address %>
   </div>
-  
   <div class="grid_4">
     <%= form.input :zip %>
   </div>  
@@ -109,6 +113,7 @@
   <div class="grid_4">
     <%= form.input :state, :collection => countries, :prompt => false %>
   </div>
+
     <div class="grid_7"></div>  
 <div class="grid_4">  
       <% if owner.verify_with_document? %>
