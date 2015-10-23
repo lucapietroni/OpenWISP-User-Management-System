@@ -50,7 +50,8 @@ class User < AccountCommon
 	:format => {:with => /\A[0-9]{11}\Z/i, :message => :pg_partita_format, :allow_blank => true}
  
   
-  validates :iban, :if => :verify_with_document?, :presence => true
+  validates :iban, :presence => true, :if => [:verify_with_document?], :unless => [:paypal?]
+  			 
   validates :product_ids, :if => :verify_with_document?, :presence => true
   validates :cpe_template_id, :if => :verify_with_document?, :presence => true
   
@@ -101,7 +102,7 @@ class User < AccountCommon
                   :username, :image_file_temp, :image_file, :image_file_data, :radius_group_ids, :product_ids,
                   :tax_code, :vat_number, :iban, :product_id, :cpe_template_id, :pg_ragione_sociale, :pg_partita_iva,
                   :pg_indirizzo, :pg_cap, :pf_cf, :pf_luogo_di_nascita, :inst_indirizzo, :inst_cap, :inst_cpe_modello,
-                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note, :is_company, :pg_comune, :has_credits
+                  :inst_cpe_username, :inst_cpe_password, :inst_cpe_mac, :gen_note, :is_company, :pg_comune, :has_credits, :paypal
 
   # Custom validations
 

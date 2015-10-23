@@ -208,6 +208,11 @@ Se continui ad avere problemi per il reset della password, per piacere contattac
   key: "repo_path"
   value: "/var/www/clients/client1/web6/web/downloads/configfiles"
 
+75:
+  system_key: f
+  key: "paypal_radius_group"
+  value: "PayPal"
+
 80:
   system_key: f
   key: "account_notification_message_en"

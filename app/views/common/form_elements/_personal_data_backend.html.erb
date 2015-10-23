@@ -125,9 +125,19 @@
       <%= form.input :iban, :as => :hidden %>
       <% end %>
    </div>   
+
+<div class="grid_4">
+<%= image_tag "paypal2.png" %>
+  <div style="margin-left:115px; margin-top:-35px">
+  <%= form.check_box :paypal %>
+  </div>
+</div>
+
 <div id="mydiv" style="display:none;">
     <iframe id="frame" src="" width="100%" height="300"></iframe>
   </div>   
+
+
 </fieldset>
 <div class="clearb">&nbsp;</div>
 <fieldset>
@@ -165,7 +175,7 @@
   <% end %>
 
 <div class="grid_4">
-  <% if current_operator.has_role? 'users_manager' %>
+  <% if current_operator.is_admin %>
       <%= form.label :radius_groups %>
       <%= render 'radius_group_select', :user => owner, :radius_groups => radius_groups %>
   <% end %>

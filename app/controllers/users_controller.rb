@@ -58,13 +58,14 @@ class UsersController < ApplicationController
     @radius_groups = RadiusGroup.all
   end
 
-  def create
+def create
    format_field
    pg_partita_iva_tmp = params[:user][:pg_partita_iva]
    params[:user][:pg_partita_iva] = params[:user][:pg_partita_iva]
 
     @user = User.new(params[:user])
-    verify_number =  check_iban_number(@user)
+    #If pay with paypal skip the iban check
+    	verify_number =  check_iban_number(@user)
 	
     # Parameter anti-tampering
     unless current_operator.has_role? 'users_manager'
@@ -72,12 +73,16 @@ class UsersController < ApplicationController
       @user.verified = @user.active = true
     end
 
+	if params[:user][:paypal] == '1'
+		@user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:paypal_radius_group))]
+	end
+	
     @countries = Country.all
     @mobile_prefixes = MobilePrefix.all
     @radius_groups = RadiusGroup.all
-		if params[:user][:is_company] == '0'		
-			@user.errors.delete(:pg_partita_iva)
-		end
+	if params[:user][:is_company] == '0'		
+		@user.errors.delete(:pg_partita_iva)
+	end
 		
     @user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
 	
@@ -91,52 +96,59 @@ class UsersController < ApplicationController
     	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]  
     	@user.mobile_prefix = params[:user][:mobile_prefix]
     	@user.mobile_suffix = params[:user][:mobile_suffix]
-    	@user.save(:validate=>false)    	
-      current_account_session.destroy unless current_account_session.nil?
-
-      # Associate user with the operator the current operator
-      current_operator.has_role!('user_manager', @user)
-			create_user_role(@user.id)
-	if @user.verification_method == 'identity_document'
-     	 uploadcpeconf
+    	@user.paypal = params[:user][:paypal]
+	if params[:user][:paypal] == '1'
+		@user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:paypal_radius_group))]
 	end
-      respond_to do |format|
-        format.html { render :ticket }
-        format.xml { render :xml => @user, :status => :created }
-      end
-    else
+    	@user.save(:validate=>false)    	
+  		current_account_session.destroy unless current_account_session.nil?
+
+		# Associate user with the operator the current operator
+		current_operator.has_role!('user_manager', @user)
+			create_user_role(@user.id)
+		if @user.verification_method == 'identity_document'
+	     	 uploadcpeconf
+		end
+		respond_to do |format|
+        	format.html { render :ticket }
+        	format.xml { render :xml => @user, :status => :created }
+		end
+	else
     	update_validation_errors(@user)
     	check_iban_number(@user)
     	if @user.errors.empty?
-		@user.attributes = params[:user]
-    		@user.inst_cpe_username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
+			@user.attributes = params[:user]
+			@user.inst_cpe_username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")
     		@user.inst_cpe_password = @user.crypted_password.to_s
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
 	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id] 
 	    	@user.mobile_prefix = params[:user][:mobile_prefix]
     		@user.mobile_suffix = params[:user][:mobile_suffix]
-	    	@user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")      
+    		@user.paypal = params[:user][:paypal]
+	    	@user.username = @user.given_name.to_s.gsub(/\s+/, "") + "." + @user.surname.to_s.gsub(/\s+/, "")     
+	if params[:user][:paypal] == '1'
+		@user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:paypal_radius_group))]
+	end 
     		@user.save(:validate=>false)				
-	      current_account_session.destroy unless current_account_session.nil?
-	
-	      # Associate user with the operator the current operator
-	      current_operator.has_role!('user_manager', @user)
-				create_user_role(@user.id)
-		if @user.verification_method == 'identity_document'
-     		 uploadcpeconf
-		end
-	      respond_to do |format|
-	        format.html { render :ticket }
-	        format.xml { render :xml => @user, :status => :created }
-	      end
+			current_account_session.destroy unless current_account_session.nil?
+			# Associate user with the operator the current operator
+			current_operator.has_role!('user_manager', @user)
+			create_user_role(@user.id)
+			if @user.verification_method == 'identity_document'
+     			 uploadcpeconf
+			end
+	      	respond_to do |format|
+	     		format.html { render :ticket }
+				format.xml { render :xml => @user, :status => :created }
+			end
     	else
-	      respond_to do |format|
-	        format.html { render :action => :edit }
-	        format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
-	      end    			
-    	end    	
-    end
-  end
+			respond_to do |format|
+	        	format.html { render :action => :edit }
+	        	format.xml { render :xml => @user.errors, :status => :unprocessable_entity }
+			end    			
+    	end
+	end
+end
 	
   def show
     if request.format.html? || request.format.js?
@@ -172,8 +184,15 @@ class UsersController < ApplicationController
 		if params[:user][:is_company] == '0'
 			@user.errors.delete(:pg_partita_iva)
 		end	 
-		
-    if @user.update_attributes(params[:user]) and check_iban_number(@user)
+	
+	if params[:user][:paypal] == '1'	
+		@user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:paypal_radius_group))]
+	end
+	
+	#If pay with paypal skip the iban check
+    	verify_number =  check_iban_number(@user)
+	
+    if @user.update_attributes(params[:user]) and verify_number
     	if current_operator.is_admin
 	    	operator_user = @user.operator_users.first
 	    	if operator_user
@@ -204,6 +223,9 @@ class UsersController < ApplicationController
 				@user.save(:validate=>false)
 				@user = User.find(@user.id)
 				@user.radius_group_ids = radius_group_ids
+				if params[:user][:paypal] == '1'	
+					@user.radius_groups = [RadiusGroup.find_by_name!(Configuration.get(:paypal_radius_group))]
+				end
 	    	@user.product_ids = params[:user][:product_ids] if params[:user][:product_ids]
 	    	@user.product_ids = [params[:user][:product_id]] if params[:user][:product_id]				
 				@user.save(:validate=>false)
@@ -266,25 +288,28 @@ class UsersController < ApplicationController
     end
   end
 
-	def check_iban_number(obj)
-		if obj.verification_method == 'identity_document'
-	    begin
-	      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
-	    rescue Exception
-				obj.errors.add(:iban, t("iban_number_is_invalid"))
-				return false
-	    end	
-		
-			if iban.valid?
-				return true
-			else
-				obj.errors.add(:iban, t("iban_number_is_invalid"))
-				return false
-			end
-		else
-			return true
-		end	
+def check_iban_number(obj)
+	if obj.paypal == true 
+		return true
 	end
+	if obj.verification_method == 'identity_document'
+    begin
+      iban = Iban::IbanCheck.new :iban => params[:user][:iban]
+    rescue Exception
+			obj.errors.add(:iban, t("iban_number_is_invalid"))
+			return false
+    end	
+	
+		if iban.valid?
+			return true
+		else
+			obj.errors.add(:iban, t("iban_number_is_invalid"))
+			return false
+		end
+	else
+		return true
+	end	
+end
 
 
   def format_field
